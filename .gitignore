@@ -361,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+*.json
+*.cshtml
+*.css
+*.csproj
+*.ico
+*.js
+*.map
+/TestWatch/wwwroot/lib/bootstrap/LICENSE

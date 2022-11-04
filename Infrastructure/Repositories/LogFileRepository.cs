@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories
 
         public void Update(LogFile logFile)
         {
-            logFile.Modified = DateTime.Now;
+            logFile.TestDateTimeStarted = DateTime.Now;
             _testWatchContext.LogFiles.Update(logFile);
             _testWatchContext.SaveChanges();
         }

@@ -18,10 +18,14 @@ namespace Domain.Models
         public string? FixtureSocket { get; set; }
         public string? Failure { get; set; }
         public string? Operator { get; set; }
+        public string? TestProgramFilePath { get; set; }
         public TimeSpan? TestingTime { get; set; }
         public List<TestStep>? TestSteps { get; set; }
 
-        public LogFile(){}
+        public LogFile()
+        {
+
+        }
 
         public LogFile(int id, string workstation, string serialnumber, string fixturesocket, string failure, string testoperator, TimeSpan testingtime, List<TestStep> teststeps)
         {

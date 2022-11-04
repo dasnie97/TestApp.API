@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TestWatchContext))]
-    partial class TestWatchContextModelSnapshot : ModelSnapshot
+    [Migration("20221103170831_v2")]
+    partial class v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,9 +55,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime>("TestDateTimeStarted")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TestProgramFilePath")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan?>("TestingTime")
                         .HasColumnType("time");
