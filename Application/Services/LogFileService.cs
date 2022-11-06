@@ -27,6 +27,8 @@ namespace Application.Services
         public void DeleteLogFile(int id)
         {
             var logFile = _logFileRepository.Get(id);
+            if (logFile == null)
+                throw new Exception("Resource does not exist.");
             _logFileRepository.Delete(logFile);
         }
 
@@ -47,6 +49,16 @@ namespace Application.Services
             var originalLogFile = _logFileRepository.Get(updateLogFile.Id);
             var logFile = _mapper.Map(updateLogFile, originalLogFile);
             _logFileRepository.Update(logFile);
+        }
+
+        public IEnumerable<string> GetAllWorkstations()
+        {
+            return _logFileRepository.GetAllWorkstations();
+        }
+
+        public IEnumerable<LogFileDTO> GetFilteredLogFiles(string workstation, string serialNumber, string result, string dut, string failure)
+        {
+            return _logFileRepository.GetFilteredLogFiles(workstation, serialNumber, result, dut, failure);
         }
     }
 }

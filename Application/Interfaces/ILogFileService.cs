@@ -10,5 +10,7 @@ namespace Application.Interfaces
         LogFileDTO AddNewLogFile(CreateLogFileDTO logFile);
         void UpdateLogFile(UpdateLogFileDTO logFile);
         void DeleteLogFile(int id);
+        IEnumerable<string> GetAllWorkstations();
+        IEnumerable<LogFileDTO> GetFilteredLogFiles(string workstation, string serialNumber, string result, string dut, string failure);
     }
 }

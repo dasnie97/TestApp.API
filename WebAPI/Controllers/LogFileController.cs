@@ -56,5 +56,14 @@ namespace WebAPI.Controllers
             _logFileService.DeleteLogFile(id);
             return NoContent();
         }
+
+        [SwaggerOperation(Summary = "Gets all unique workstations")]
+        [HttpGet]
+        [Route("workstations")]
+        public IActionResult GetAllWorkstations()
+        {
+            var workstations = _logFileService.GetAllWorkstations();
+            return Ok(workstations);
+        }
     }
 }

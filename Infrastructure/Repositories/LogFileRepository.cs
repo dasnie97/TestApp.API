@@ -41,5 +41,34 @@ namespace Infrastructure.Repositories
             _testWatchContext.LogFiles.Update(logFile);
             _testWatchContext.SaveChanges();
         }
+
+        public IEnumerable<string> GetAllWorkstations()
+        {         
+            return _testWatchContext.
+                LogFiles.
+                AsEnumerable().
+                DistinctBy(x => x.Workstation).
+                Select(x => x.Workstation).
+                OrderBy(x => x).
+                ToList();
+        }
+
+        public IEnumerable<LogFile> GetFilteredLogFiles(string workstation, string serialNumber, string result, string dut, string failure)
+        {
+
+            return _testWatchContext.
+                LogFiles.
+                AsEnumerable().
+                Where(x =>
+                x.Workstation.Contains(workstation) &&
+                x.SerialNumber.Contains(serialNumber) &&
+                x.Status.Contains(result) &&
+                x.FixtureSocket.Contains(dut) &&
+                x.Failure.Contains(failure)).
+                OrderByDescending(x => x.TestDateTimeStarted).
+                ToList();
+                
+                
+        }
     }
 }

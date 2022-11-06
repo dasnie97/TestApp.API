@@ -9,5 +9,7 @@ namespace Domain.Interfaces
         LogFile Get(int id);
         IEnumerable<LogFile> GetAll();
         void Update(LogFile logFile);
+        IEnumerable<string> GetAllWorkstations();
+        IEnumerable<LogFile> GetFilteredLogFiles(string workstation, string serialNumber, string result, string dut, string failure);
     }
 }
