@@ -10,6 +10,7 @@ namespace Domain.Interfaces
         IEnumerable<LogFile> GetAll();
         void Update(LogFile logFile);
         IEnumerable<string> GetAllWorkstations();
-        IEnumerable<LogFile> GetFilteredLogFiles(string workstation, string serialNumber, string result, string dut, string failure);
+        IEnumerable<LogFile> GetFilteredLogFiles(string? workstation, string? serialNumber, string? result, string? dut, string? failure);
+        Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints();
     }
 }

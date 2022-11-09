@@ -1,5 +1,5 @@
 ﻿using Application.DTO;
-
+using Domain.Models;
 
 namespace Application.Interfaces
 {
@@ -11,6 +11,7 @@ namespace Application.Interfaces
         void UpdateLogFile(UpdateLogFileDTO logFile);
         void DeleteLogFile(int id);
         IEnumerable<string> GetAllWorkstations();
-        IEnumerable<LogFileDTO> GetFilteredLogFiles(string workstation, string serialNumber, string result, string dut, string failure);
+        IEnumerable<LogFileDTO> GetFilteredLogFiles(string? workstation, string? serialNumber, string? result, string? dut, string? failure);
+        Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints();
     }
 }

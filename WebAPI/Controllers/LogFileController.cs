@@ -65,5 +65,21 @@ namespace WebAPI.Controllers
             var workstations = _logFileService.GetAllWorkstations();
             return Ok(workstations);
         }
+
+        [SwaggerOperation(Summary ="Gets Log Files according to filter values")]
+        [HttpGet("filter")]
+        public IActionResult GetFilteredLogFiles(string? workstation=null, string? serialNumber = null, string? result = null, string? dut = null, string? failure = null)
+        {
+            var filteredLogFiles = _logFileService.GetFilteredLogFiles(workstation, serialNumber, result, dut, failure);
+            return Ok(filteredLogFiles);
+        }
+
+        [SwaggerOperation(Summary = "Gets yield of each workstation from last 24 hours")]
+        [HttpGet("yield")]
+        public IActionResult GetYieldPoints()
+        {
+            var yieldPoints = _logFileService.GetYieldPoints();
+            return Ok(yieldPoints);
+        }
     }
 }

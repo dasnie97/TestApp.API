@@ -56,9 +56,15 @@ namespace Application.Services
             return _logFileRepository.GetAllWorkstations();
         }
 
-        public IEnumerable<LogFileDTO> GetFilteredLogFiles(string workstation, string serialNumber, string result, string dut, string failure)
+        public IEnumerable<LogFileDTO> GetFilteredLogFiles(string? workstation, string? serialNumber, string? result, string? dut, string? failure)
         {
-            return _logFileRepository.GetFilteredLogFiles(workstation, serialNumber, result, dut, failure);
+            var filteredLogFiles = _logFileRepository.GetFilteredLogFiles(workstation, serialNumber, result, dut, failure);
+            return _mapper.Map<IEnumerable<LogFileDTO>>(filteredLogFiles);
+        }
+
+        public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
+        {
+            return _logFileRepository.GetYieldPoints();
         }
     }
 }
