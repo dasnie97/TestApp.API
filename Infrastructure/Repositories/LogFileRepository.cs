@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data;
+using System.Diagnostics.Contracts;
 using System.Text.Json.Serialization.Metadata;
 
 namespace Infrastructure.Repositories
@@ -86,11 +87,22 @@ namespace Infrastructure.Repositories
             ToList();
         }
 
+        /// <summary>
+        /// Checks if input data came from regular production - returns true if so
+        /// </summary>
+        /// <param name="dataSet">Input data set</param>
+        /// <returns>True if data is considered to be from regular production. Otherwise false.</returns>
         private bool IsYieldPointOk(IGrouping<int, LogFile> dataSet)
         {
             try
             {
-                var minHourlyOutput = 1800 / dataSet.Average(x => x.TestingTime.Value.TotalSeconds);
+                var averageTestTime = dataSet.Where(x => x.Status == "Passed").Average(x => x.TestingTime.Value.TotalSeconds);
+                var minHourlyOutput = 1000 / averageTestTime;
+
+                if (averageTestTime == 0)
+                {
+                    throw new Exception("Average test time is 0!");
+                }
 
                 if (dataSet.Count() <= minHourlyOutput)
                 {
@@ -107,7 +119,7 @@ namespace Infrastructure.Repositories
 
         public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
         {
-            var currentTime = new DateTime(2022, 10, 18);
+            var currentTime = new DateTime(2022, 11, 10, 18,0,0);
             var query = _testWatchContext.LogFiles.AsEnumerable().
                 Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1))
                 .GroupBy(x => x.Workstation);
@@ -122,11 +134,16 @@ namespace Infrastructure.Repositories
                 {
                     if (!IsYieldPointOk(singleHour)) continue;
                     float passed = singleHour.Count(x => x.Status == "Passed");
+                    float failed = singleHour.Count(x => x.Status == "Failed");
                     float total = singleHour.Count();
+                    var tP = singleHour.First().TestDateTimeStarted;
                     workstationYieldPoints.Add(new YieldPoint
                     {
-                        DateAndTime = currentTime.AddHours(singleHour.Key + 1),
-                        Yield = passed / total
+                        DateAndTime = new DateTime(tP.Year, tP.Month, tP.Day, tP.Hour + 1, 0, 0),
+                        Yield = passed / total,
+                        Total = (int)total,
+                        Passed = (int)passed,
+                        Failed = (int)failed
                     });
                 }
                 yieldPoints.Add(workstationGroup.Key, workstationYieldPoints);
