@@ -1,8 +1,6 @@
 ﻿using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data;
-using System.Diagnostics.Contracts;
-using System.Text.Json.Serialization.Metadata;
 
 namespace Infrastructure.Repositories
 {
@@ -16,6 +14,10 @@ namespace Infrastructure.Repositories
 
         public LogFile Add(LogFile logFile)
         {
+            var isFirstPass = _testWatchContext.LogFiles.
+                Where(x=>x.SerialNumber == logFile.SerialNumber && x.ProcessStep == logFile.ProcessStep).Any();
+            logFile.isFirstPass = !isFirstPass;
+            logFile.RecordCreated = DateTime.Now;
             _testWatchContext.LogFiles.Add(logFile);
             _testWatchContext.SaveChanges();
             return logFile;
@@ -92,8 +94,12 @@ namespace Infrastructure.Repositories
         /// </summary>
         /// <param name="dataSet">Input data set</param>
         /// <returns>True if data is considered to be from regular production. Otherwise false.</returns>
-        private bool IsYieldPointOk(IGrouping<int, LogFile> dataSet)
+        private bool IsYieldPointOk(IEnumerable<LogFile> dataSet)
         {
+            if (dataSet.Count() == 0)
+            {
+                return false;
+            }
             try
             {
                 var averageTestTime = dataSet.Where(x => x.Status == "Passed").Average(x => x.TestingTime.Value.TotalSeconds);
@@ -120,23 +126,35 @@ namespace Infrastructure.Repositories
         public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
         {
             var currentTime = new DateTime(2022, 11, 10, 18,0,0);
-            var query = _testWatchContext.LogFiles.AsEnumerable().
-                Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1))
-                .GroupBy(x => x.Workstation);
+            var query = _testWatchContext.LogFiles.
+                Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1)).
+                Where(x=>x.isFirstPass == true).AsEnumerable().GroupBy(x=>x.Workstation);
 
             Dictionary<string, IEnumerable<YieldPoint>> yieldPoints = new Dictionary<string, IEnumerable<YieldPoint>>();
 
             foreach(IGrouping<string, LogFile> workstationGroup in query)
             {
                 List<YieldPoint> workstationYieldPoints = new List<YieldPoint>();
-                var hourGroups = workstationGroup.GroupBy(x => x.TestDateTimeStarted.Hour);
-                foreach (IGrouping < int, LogFile > singleHour in hourGroups)
+                foreach (var hour in Enumerable.Range(0, 24))
                 {
-                    if (!IsYieldPointOk(singleHour)) continue;
-                    float passed = singleHour.Count(x => x.Status == "Passed");
-                    float failed = singleHour.Count(x => x.Status == "Failed");
-                    float total = singleHour.Count();
-                    var tP = singleHour.First().TestDateTimeStarted;
+                    var time = currentTime.AddDays(-1).AddHours(hour);
+                    var records = workstationGroup.Where(x => x.TestDateTimeStarted.Hour == time.Hour && x.TestDateTimeStarted.Day == time.Day).ToList();
+                    if (!IsYieldPointOk(records))
+                    {
+                        workstationYieldPoints.Add(new YieldPoint
+                        {
+                            DateAndTime = time.AddHours(1).AddMinutes(-time.Minute).AddSeconds(-time.Second),
+                            Yield = null,
+                            Total = 0,
+                            Passed = 0,
+                            Failed = 0
+                        });
+                        continue;
+                    }
+                    float passed = records.Count(x => x.Status == "Passed");
+                    float failed = records.Count(x => x.Status == "Failed");
+                    float total = records.Count();
+                    var tP = records.First().TestDateTimeStarted;
                     workstationYieldPoints.Add(new YieldPoint
                     {
                         DateAndTime = new DateTime(tP.Year, tP.Month, tP.Day, tP.Hour + 1, 0, 0),
