@@ -369,3 +369,7 @@ FodyWeavers.xsd
 *.js
 *.map
 /TestWatch/wwwroot/lib/bootstrap/LICENSE
+/Infrastructure/Data/Migrations/20221113101752_v4.cs
+/Infrastructure/Data/Migrations/20221113101752_v4.Designer.cs
+/Infrastructure/Data/Migrations/TestWatchContextModelSnapshot.cs
+/TestApp.sln
