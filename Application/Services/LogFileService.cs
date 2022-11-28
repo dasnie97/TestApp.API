@@ -32,10 +32,11 @@ namespace Application.Services
             _logFileRepository.Delete(logFile);
         }
 
-        public IEnumerable<LogFileDTO> GetAllLogFiles()
+        public IEnumerable<LogFileDTO> GetAllLogFiles(GetLogFilesFilter? getLogFilesFilter = null)
         {
-            var logFiles = _logFileRepository.GetAll();
-            return _mapper.Map<IEnumerable<LogFileDTO>>(logFiles);
+            var filter = _mapper.Map<GetLogFilesQuery>(getLogFilesFilter);
+            var filteredLogFiles = _logFileRepository.GetAll(filter);
+            return _mapper.Map<IEnumerable<LogFileDTO>>(filteredLogFiles);
         }
 
         public LogFileDTO GetLogFileById(int id)
@@ -54,12 +55,6 @@ namespace Application.Services
         public IEnumerable<string> GetAllWorkstations()
         {
             return _logFileRepository.GetAllWorkstations();
-        }
-
-        public IEnumerable<LogFileDTO> GetFilteredLogFiles(string? workstation, string? serialNumber, string? result, string? dut, string? failure)
-        {
-            var filteredLogFiles = _logFileRepository.GetFilteredLogFiles(workstation, serialNumber, result, dut, failure);
-            return _mapper.Map<IEnumerable<LogFileDTO>>(filteredLogFiles);
         }
 
         public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()

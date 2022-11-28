@@ -1,6 +1,5 @@
 ﻿using Application.DTO;
 using Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,12 +15,12 @@ namespace WebAPI.Controllers
             _logFileService = logFileService;
         }
 
-        [SwaggerOperation(Summary ="Retrieves all log files")]
+        [SwaggerOperation(Summary = "Gets Log Files according to filter values")]
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] GetLogFilesFilter logFileFilterParameters)
         {
-            var logFiles = _logFileService.GetAllLogFiles();
-            return Ok(logFiles);
+            var filteredLogFiles = _logFileService.GetAllLogFiles(logFileFilterParameters);
+            return Ok(filteredLogFiles);
         }
 
         [SwaggerOperation(Summary = "Retrieves log file by id")]
@@ -64,14 +63,6 @@ namespace WebAPI.Controllers
         {
             var workstations = _logFileService.GetAllWorkstations();
             return Ok(workstations);
-        }
-
-        [SwaggerOperation(Summary ="Gets Log Files according to filter values")]
-        [HttpGet("filter")]
-        public IActionResult GetFilteredLogFiles(string? workstation=null, string? serialNumber = null, string? result = null, string? dut = null, string? failure = null)
-        {
-            var filteredLogFiles = _logFileService.GetFilteredLogFiles(workstation, serialNumber, result, dut, failure);
-            return Ok(filteredLogFiles);
         }
 
         [SwaggerOperation(Summary = "Gets yield of each workstation from last 24 hours")]

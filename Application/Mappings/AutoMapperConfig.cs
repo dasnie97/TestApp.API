@@ -11,6 +11,7 @@ namespace Application.Mappings
             cfg.CreateMap<LogFile, LogFileDTO>();
             cfg.CreateMap<CreateLogFileDTO, LogFile>();
             cfg.CreateMap<UpdateLogFileDTO, LogFile>();
+            cfg.CreateMap<GetLogFilesFilter, GetLogFilesQuery>();
         }).CreateMapper();
     }
 }

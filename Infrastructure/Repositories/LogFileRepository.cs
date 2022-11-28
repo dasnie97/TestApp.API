@@ -34,9 +34,14 @@ namespace Infrastructure.Repositories
             return _testWatchContext.LogFiles.SingleOrDefault(x => x.Id == id)!;
         }
 
-        public IEnumerable<LogFile> GetAll()
+        public IEnumerable<LogFile> GetAll(GetLogFilesQuery filter)
         {
-            return _testWatchContext.LogFiles;
+            var query = _testWatchContext.
+              LogFiles.
+              AsQueryable();
+            query = AddFiltersOnQuery(query, filter);
+            return query.OrderByDescending(x => x.TestDateTimeStarted).Take(1000).
+            ToList();
         }
 
         public void Update(LogFile logFile)
@@ -57,72 +62,6 @@ namespace Infrastructure.Repositories
                 ToList();
         }
 
-        public IEnumerable<LogFile> GetFilteredLogFiles(string? workstation, string? serialNumber, string? result, string? dut, string? failure)
-        {
-
-            var query = _testWatchContext.
-                LogFiles.
-                AsEnumerable();
-
-            if (!string.IsNullOrEmpty(workstation) && workstation != "All workstations")
-            {
-                query = query.Where(x => x.Workstation.ToLower().Contains(workstation.ToLower()));
-            }
-            if (!string.IsNullOrEmpty(serialNumber))
-            {
-                query = query.Where(x => x.SerialNumber.ToLower().Contains(serialNumber.ToLower()));
-            }
-            if (!string.IsNullOrEmpty(result))
-            {
-                query = query.Where(x => x.Status.ToLower().Contains(result.ToLower()));
-            }
-            if (!string.IsNullOrEmpty(dut))
-            {
-                query = query.Where(x => x.FixtureSocket.ToLower().Contains(dut.ToLower()));
-            }
-            if (!string.IsNullOrEmpty(failure))
-            {
-                query = query.Where(x => x.Failure.ToLower().Contains(failure.ToLower()));
-            }
-
-            return query.OrderByDescending(x => x.TestDateTimeStarted).
-            ToList();
-        }
-
-        /// <summary>
-        /// Checks if input data came from regular production - returns true if so
-        /// </summary>
-        /// <param name="dataSet">Input data set</param>
-        /// <returns>True if data is considered to be from regular production. Otherwise false.</returns>
-        private bool IsYieldPointOk(IEnumerable<LogFile> dataSet)
-        {
-            if (dataSet.Count() == 0)
-            {
-                return false;
-            }
-            try
-            {
-                var averageTestTime = dataSet.Where(x => x.Status == "Passed").Average(x => x.TestingTime.Value.TotalSeconds);
-                var minHourlyOutput = 1000 / averageTestTime;
-
-                if (averageTestTime == 0)
-                {
-                    throw new Exception("Average test time is 0!");
-                }
-
-                if (dataSet.Count() <= minHourlyOutput)
-                {
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-
-            }
-
-            return true;
-        }
-
         public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
         {
             var currentTime = new DateTime(2022, 11, 10, 18,0,0);
@@ -135,9 +74,9 @@ namespace Infrastructure.Repositories
             foreach(IGrouping<string, LogFile> workstationGroup in query)
             {
                 List<YieldPoint> workstationYieldPoints = new List<YieldPoint>();
-                foreach (var hour in Enumerable.Range(0, 24))
+                foreach (var hour in Enumerable.Range(0, 25))
                 {
-                    var time = currentTime.AddDays(-1).AddHours(hour);
+                    var time = currentTime.AddHours(-25).AddHours(hour);
                     var records = workstationGroup.Where(x => x.TestDateTimeStarted.Hour == time.Hour && x.TestDateTimeStarted.Day == time.Day).ToList();
                     if (!IsYieldPointOk(records))
                     {
@@ -169,6 +108,47 @@ namespace Infrastructure.Repositories
 
 
             return yieldPoints;
+        }
+
+        private bool IsYieldPointOk(IEnumerable<LogFile> dataSet)
+        {
+            if (dataSet.Count() == 0)
+            {
+                return false;
+            }
+            try
+            {
+                var averageTestTime = dataSet.Where(x => x.Status == "Passed").Average(x => x.TestingTime.Value.TotalSeconds);
+                var minHourlyOutput = 1000 / averageTestTime;
+
+                if (averageTestTime == 0)
+                {
+                    throw new Exception("Average test time is 0!");
+                }
+
+                if (dataSet.Count() <= minHourlyOutput)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return true;
+        }
+
+        private IQueryable<LogFile> AddFiltersOnQuery(IQueryable<LogFile> query, GetLogFilesQuery filters) 
+        {
+            query = filters.workstation.Length != 0 && filters.workstation.FirstOrDefault() != string.Empty ? query.Where(x => filters.workstation.Contains(x.Workstation)) : query;
+            query = filters.serialNumber.Length != 0 && filters.serialNumber.FirstOrDefault() != string.Empty ? query.Where(x => filters.serialNumber.Contains(x.SerialNumber)) : query;
+            query = filters.dut.Length != 0 ? query.Where(x => filters.dut.Contains(x.FixtureSocket)) : query;
+            query = filters.failure.Length != 0 ? query.Where(x => x.Failure.Contains(filters.failure[0])) : query;
+            query = filters.result != null ? query.Where(x => x.Status == filters.result) : query;
+            query = filters.dateFrom != new DateTime() ? query.Where(x => x.TestDateTimeStarted >= filters.dateFrom) : query;
+            query = filters.dateTo != new DateTime() ? query.Where(x => x.TestDateTimeStarted <= filters.dateTo) : query;
+            return query;
         }
     }
 }
