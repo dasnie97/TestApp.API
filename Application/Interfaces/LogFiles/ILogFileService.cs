@@ -1,7 +1,7 @@
-﻿using Application.DTO;
-using Domain.Models;
+﻿using Application.DTO.LogFiles;
+using Domain.Models.LogFiles;
 
-namespace Application.Interfaces
+namespace Application.Interfaces.LogFiles
 {
     public interface ILogFileService
     {

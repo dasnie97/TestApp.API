@@ -1,10 +1,10 @@
-﻿using Application.DTO;
-using Application.Interfaces;
+﻿using Application.DTO.LogFiles;
+using Application.Interfaces.LogFiles;
 using AutoMapper;
-using Domain.Interfaces;
-using Domain.Models;
+using Domain.Interfaces.LogFiles;
+using Domain.Models.LogFiles;
 
-namespace Application.Services
+namespace Application.Services.LogFiles
 {
     public class LogFileService : ILogFileService
     {

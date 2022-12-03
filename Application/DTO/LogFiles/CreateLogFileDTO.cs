@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace Application.DTO
+namespace Application.DTO.LogFiles
 {
     public class CreateLogFileDTO
     {

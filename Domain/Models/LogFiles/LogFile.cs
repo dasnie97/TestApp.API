@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using GenericTestReport.Interfaces;
 
-namespace Domain.Models
+namespace Domain.Models.LogFiles
 {
     [Table("LogFiles")]
     public class LogFile : ILogFile<TestStep>
@@ -20,13 +20,13 @@ namespace Domain.Models
         public string? Failure { get; set; }
         public string? Operator { get; set; }
         public string? TestProgramFilePath { get; set; }
-        public bool isFirstPass { get; set;}
+        public bool isFirstPass { get; set; }
         public string ProcessStep { get; set; }
         public List<TestStep>? TestSteps { get; set; }
         public TimeSpan? TestingTime { get; set; }
         public DateTime RecordCreated { get; set; }
         public DateTime TestDateTimeStarted { get; set; }
-        
+
         public LogFile()
         {
 

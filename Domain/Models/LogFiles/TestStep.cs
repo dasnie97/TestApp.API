@@ -1,6 +1,6 @@
 ﻿using GenericTestReport.Interfaces;
 
-namespace Domain.Models
+namespace Domain.Models.LogFiles
 {
     public class TestStep : ITestStep
     {
@@ -17,9 +17,9 @@ namespace Domain.Models
         public string Failure { get; set; }
         public LogFile Logfile { get; set; } = null!;
         public DateTime RecordCreated { get; set; }
-        
 
-        public TestStep(){}
+
+        public TestStep() { }
 
         public TestStep(int id, string name, string type, string value, string unit, string lowerlimit, string upperlimit, LogFile logfile)
         {

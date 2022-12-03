@@ -1,6 +1,6 @@
-﻿using Domain.Models;
+﻿using Domain.Models.LogFiles;
 
-namespace Domain.Interfaces
+namespace Domain.Interfaces.LogFiles
 {
     public interface ILogFileRepository
     {

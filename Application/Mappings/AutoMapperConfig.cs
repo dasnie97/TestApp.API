@@ -1,6 +1,8 @@
-﻿using Application.DTO;
+﻿using Application.DTO.LogFiles;
+using Application.DTO.Workstations;
 using AutoMapper;
-using Domain.Models;
+using Domain.Models.LogFiles;
+using Domain.Models.Workstations;
 
 namespace Application.Mappings
 {
@@ -12,6 +14,9 @@ namespace Application.Mappings
             cfg.CreateMap<CreateLogFileDTO, LogFile>();
             cfg.CreateMap<UpdateLogFileDTO, LogFile>();
             cfg.CreateMap<GetLogFilesFilter, GetLogFilesQuery>();
+            cfg.CreateMap<Workstation, WorkstationDTO>();
+            cfg.CreateMap<AddWorkstationDTO, Workstation>();
+            cfg.CreateMap<WorkstationDTO, Workstation>();
         }).CreateMapper();
     }
 }

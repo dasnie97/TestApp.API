@@ -1,9 +1,13 @@
-using Application.Interfaces;
+using Application.Interfaces.LogFiles;
+using Application.Interfaces.Workstations;
 using Application.Mappings;
-using Application.Services;
-using Domain.Interfaces;
+using Application.Services.LogFiles;
+using Application.Services.Workstations;
+using Domain.Interfaces.LogFiles;
+using Domain.Interfaces.Workstations;
 using Infrastructure.Data;
-using Infrastructure.Repositories;
+using Infrastructure.Repositories.LogFiles;
+using Infrastructure.Repositories.Workstations;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<ILogFileRepository, LogFileRepository>();
 builder.Services.AddScoped<ILogFileService, LogFileService>();
+builder.Services.AddScoped<IWorkstationRepository, WorkstationRepository>();
+builder.Services.AddScoped<IWorkstationService, WorkstationService>();
 builder.Services.AddDbContext<TestWatchContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestWatch")));
 
 builder.Services.AddSingleton(AutoMapperConfig.Initialize());

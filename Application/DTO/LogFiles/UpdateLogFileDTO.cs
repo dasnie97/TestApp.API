@@ -1,11 +1,11 @@
-﻿namespace Application.DTO
+﻿namespace Application.DTO.LogFiles
 {
-    public class LogFileDTO
+    public class UpdateLogFileDTO
     {
         public int Id { get; set; }
-        public string? Workstation { get; set; } = null!;
-        public string? SerialNumber { get; set; } = null!;
-        public string? Status { get; set; } = null!;
+        public string Workstation { get; set; } = null!;
+        public string SerialNumber { get; set; } = null!;
+        public string Status { get; set; } = null!;
         public string? FixtureSocket { get; set; }
         public string? Failure { get; set; }
         public string? Operator { get; set; }

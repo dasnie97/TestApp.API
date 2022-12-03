@@ -1,8 +1,8 @@
-﻿using Domain.Interfaces;
-using Domain.Models;
+﻿using Domain.Interfaces.LogFiles;
+using Domain.Models.LogFiles;
 using Infrastructure.Data;
 
-namespace Infrastructure.Repositories
+namespace Infrastructure.Repositories.LogFiles
 {
     public class LogFileRepository : ILogFileRepository
     {
@@ -15,7 +15,7 @@ namespace Infrastructure.Repositories
         public LogFile Add(LogFile logFile)
         {
             var isFirstPass = _testWatchContext.LogFiles.
-                Where(x=>x.SerialNumber == logFile.SerialNumber && x.ProcessStep == logFile.ProcessStep).Any();
+                Where(x => x.SerialNumber == logFile.SerialNumber && x.ProcessStep == logFile.ProcessStep).Any();
             logFile.isFirstPass = !isFirstPass;
             logFile.RecordCreated = DateTime.Now;
             _testWatchContext.LogFiles.Add(logFile);
@@ -52,7 +52,7 @@ namespace Infrastructure.Repositories
         }
 
         public IEnumerable<string> GetAllWorkstations()
-        {         
+        {
             return _testWatchContext.
                 LogFiles.
                 AsEnumerable().
@@ -64,14 +64,14 @@ namespace Infrastructure.Repositories
 
         public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
         {
-            var currentTime = new DateTime(2022, 11, 10, 18,0,0);
+            var currentTime = new DateTime(2022, 11, 10, 18, 0, 0);
             var query = _testWatchContext.LogFiles.
                 Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1)).
-                Where(x=>x.isFirstPass == true).AsEnumerable().GroupBy(x=>x.Workstation);
+                Where(x => x.isFirstPass == true).AsEnumerable().GroupBy(x => x.Workstation);
 
             Dictionary<string, IEnumerable<YieldPoint>> yieldPoints = new Dictionary<string, IEnumerable<YieldPoint>>();
 
-            foreach(IGrouping<string, LogFile> workstationGroup in query)
+            foreach (IGrouping<string, LogFile> workstationGroup in query)
             {
                 List<YieldPoint> workstationYieldPoints = new List<YieldPoint>();
                 foreach (var hour in Enumerable.Range(0, 25))
@@ -139,7 +139,7 @@ namespace Infrastructure.Repositories
             return true;
         }
 
-        private IQueryable<LogFile> AddFiltersOnQuery(IQueryable<LogFile> query, GetLogFilesQuery filters) 
+        private IQueryable<LogFile> AddFiltersOnQuery(IQueryable<LogFile> query, GetLogFilesQuery filters)
         {
             query = filters.workstation.Length != 0 && filters.workstation.FirstOrDefault() != string.Empty ? query.Where(x => filters.workstation.Contains(x.Workstation)) : query;
             query = filters.serialNumber.Length != 0 && filters.serialNumber.FirstOrDefault() != string.Empty ? query.Where(x => filters.serialNumber.Contains(x.SerialNumber)) : query;

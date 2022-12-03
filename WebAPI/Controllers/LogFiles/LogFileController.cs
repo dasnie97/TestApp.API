@@ -1,9 +1,9 @@
-﻿using Application.DTO;
-using Application.Interfaces;
+﻿using Application.DTO.LogFiles;
+using Application.Interfaces.LogFiles;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace WebAPI.Controllers
+namespace WebAPI.Controllers.LogFiles
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -32,7 +32,7 @@ namespace WebAPI.Controllers
             return Ok(logFile);
         }
 
-        [SwaggerOperation(Summary ="Create new log file")]
+        [SwaggerOperation(Summary = "Create new log file")]
         [HttpPost]
         public IActionResult Create(CreateLogFileDTO newLogFile)
         {
@@ -40,7 +40,7 @@ namespace WebAPI.Controllers
             return Created($"api/logfiles/{logFile.Id}", logFile);
         }
 
-        [SwaggerOperation(Summary ="Updates existing log file")]
+        [SwaggerOperation(Summary = "Updates existing log file")]
         [HttpPut]
         public IActionResult Update(UpdateLogFileDTO updateLogFile)
         {
@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
-        [SwaggerOperation(Summary ="Deletes log file")]
+        [SwaggerOperation(Summary = "Deletes log file")]
         [HttpDelete]
         public IActionResult Delete(int id)
         {
