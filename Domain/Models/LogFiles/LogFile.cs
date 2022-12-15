@@ -11,17 +11,17 @@ namespace Domain.Models.LogFiles
         public int Id { get; set; }
         [Required]
         [MaxLength(30)]
-        public string Workstation { get; set; }
+        public string Workstation { get; set; } = string.Empty;
         [Required]
         [MaxLength(100)]
-        public string SerialNumber { get; set; }
-        public string Status { get; set; }
+        public string SerialNumber { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
         public string? FixtureSocket { get; set; }
-        public string? Failure { get; set; }
+        public string Failure { get; set; } = string.Empty;
         public string? Operator { get; set; }
         public string? TestProgramFilePath { get; set; }
-        public bool isFirstPass { get; set; }
-        public string ProcessStep { get; set; }
+        public bool IsFirstPass { get; set; }
+        public string? ProcessStep { get; set; }
         public List<TestStep>? TestSteps { get; set; }
         public TimeSpan? TestingTime { get; set; }
         public DateTime RecordCreated { get; set; }

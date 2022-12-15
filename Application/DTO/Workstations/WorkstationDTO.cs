@@ -3,10 +3,10 @@
     public class WorkstationDTO
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Customer { get; set; }
-        public string? PositionX { get; set; }
-        public string? PositionY { get; set; }
-        public string? State { get; set;}
+        public string? Name { get; set; } = null;
+        public string? Customer { get; set; } = null;
+        public string? PositionX { get; set; } = null;
+        public string? PositionY { get; set; } = null;
+        public string? State { get; set; } = null;
     }
 }

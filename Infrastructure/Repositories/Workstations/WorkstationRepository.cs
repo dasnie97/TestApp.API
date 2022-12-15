@@ -20,6 +20,12 @@ namespace Infrastructure.Repositories.Workstations
             return workstation;
         }
 
+        public void Delete(Workstation workstation)
+        {
+            _testWatchContext.Workstations.Remove(workstation);
+            _testWatchContext.SaveChanges();
+        }
+
         public IEnumerable<Workstation> Get()
         {
             return _testWatchContext.Workstations;
@@ -27,7 +33,6 @@ namespace Infrastructure.Repositories.Workstations
 
         public Workstation Update(Workstation workstation)
         {
-            workstation.RecordUpdated = DateTime.Now;
             _testWatchContext.Workstations.Update(workstation);
             _testWatchContext.SaveChanges();
             return workstation;

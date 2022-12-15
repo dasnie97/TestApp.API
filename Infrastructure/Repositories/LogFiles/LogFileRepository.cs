@@ -16,7 +16,7 @@ namespace Infrastructure.Repositories.LogFiles
         {
             var isFirstPass = _testWatchContext.LogFiles.
                 Where(x => x.SerialNumber == logFile.SerialNumber && x.ProcessStep == logFile.ProcessStep).Any();
-            logFile.isFirstPass = !isFirstPass;
+            logFile.IsFirstPass = !isFirstPass;
             logFile.RecordCreated = DateTime.Now;
             _testWatchContext.LogFiles.Add(logFile);
             _testWatchContext.SaveChanges();
@@ -67,13 +67,13 @@ namespace Infrastructure.Repositories.LogFiles
             var currentTime = new DateTime(2022, 11, 10, 18, 0, 0);
             var query = _testWatchContext.LogFiles.
                 Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1)).
-                Where(x => x.isFirstPass == true).AsEnumerable().GroupBy(x => x.Workstation);
+                Where(x => x.IsFirstPass == true).AsEnumerable().GroupBy(x => x.Workstation);
 
-            Dictionary<string, IEnumerable<YieldPoint>> yieldPoints = new Dictionary<string, IEnumerable<YieldPoint>>();
+            Dictionary<string, IEnumerable<YieldPoint>> yieldPoints = new();
 
             foreach (IGrouping<string, LogFile> workstationGroup in query)
             {
-                List<YieldPoint> workstationYieldPoints = new List<YieldPoint>();
+                List<YieldPoint> workstationYieldPoints = new();
                 foreach (var hour in Enumerable.Range(0, 25))
                 {
                     var time = currentTime.AddHours(-25).AddHours(hour);
@@ -118,7 +118,7 @@ namespace Infrastructure.Repositories.LogFiles
             }
             try
             {
-                var averageTestTime = dataSet.Where(x => x.Status == "Passed").Average(x => x.TestingTime.Value.TotalSeconds);
+                var averageTestTime = dataSet.Where(x => x.Status == "Passed").Average(x => x.TestingTime!.Value.TotalSeconds);
                 var minHourlyOutput = 1000 / averageTestTime;
 
                 if (averageTestTime == 0)
@@ -141,13 +141,13 @@ namespace Infrastructure.Repositories.LogFiles
 
         private IQueryable<LogFile> AddFiltersOnQuery(IQueryable<LogFile> query, GetLogFilesQuery filters)
         {
-            query = filters.workstation.Length != 0 && filters.workstation.FirstOrDefault() != string.Empty ? query.Where(x => filters.workstation.Contains(x.Workstation)) : query;
-            query = filters.serialNumber.Length != 0 && filters.serialNumber.FirstOrDefault() != string.Empty ? query.Where(x => filters.serialNumber.Contains(x.SerialNumber)) : query;
-            query = filters.dut.Length != 0 ? query.Where(x => filters.dut.Contains(x.FixtureSocket)) : query;
-            query = filters.failure.Length != 0 ? query.Where(x => x.Failure.Contains(filters.failure[0])) : query;
-            query = filters.result != null ? query.Where(x => x.Status == filters.result) : query;
-            query = filters.dateFrom != new DateTime() ? query.Where(x => x.TestDateTimeStarted >= filters.dateFrom) : query;
-            query = filters.dateTo != new DateTime() ? query.Where(x => x.TestDateTimeStarted <= filters.dateTo) : query;
+            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation)) : query;
+            query = filters.SerialNumber?.FirstOrDefault() != null && filters.SerialNumber.Length != 0 ? query.Where(x => filters.SerialNumber.Contains(x.SerialNumber)) : query;
+            query = filters.Dut?.FirstOrDefault() != null && filters.Dut.Length != 0 ? query.Where(x => filters.Dut.Contains(x.FixtureSocket)) : query;
+            query = filters.Failure?.FirstOrDefault() != null && filters.Failure.Length != 0 ? query.Where(x => x.Failure.Contains(filters.Failure[0])) : query;
+            query = filters.Result != null ? query.Where(x => x.Status == filters.Result) : query;
+            query = filters.DateFrom != new DateTime() ? query.Where(x => x.TestDateTimeStarted >= filters.DateFrom) : query;
+            query = filters.DateTo != new DateTime() ? query.Where(x => x.TestDateTimeStarted <= filters.DateTo) : query;
             return query;
         }
     }

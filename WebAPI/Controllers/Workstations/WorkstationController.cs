@@ -38,5 +38,13 @@ namespace WebAPI.Controllers.Workstations
             var updated = _workstationService.Update(workstation);
             return Ok(updated);
         }
+
+        [SwaggerOperation(Summary ="Delete workstation")]
+        [HttpDelete]
+        public IActionResult DeleteWorkstation(int id)
+        {
+            _workstationService.Delete(id);
+            return NoContent();
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace Domain.Models.LogFiles
         public string TestLowerLimit { get; set; } = null!;
         public string TestUpperLimit { get; set; } = null!;
         public bool IsNumeric { get; set; }
-        public string Failure { get; set; }
+        public string Failure { get; set; } = string.Empty;
         public LogFile Logfile { get; set; } = null!;
         public DateTime RecordCreated { get; set; }
 
