@@ -1,8 +1,8 @@
 ﻿using Application.DTO.Workstations;
 using Application.Interfaces.Workstations;
 using AutoMapper;
-using Domain.Interfaces.Workstations;
-using Domain.Models.Workstations;
+using Domain.Interfaces;
+using Domain.Models;
 
 namespace Application.Services.Workstations
 {

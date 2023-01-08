@@ -1,60 +1,59 @@
-﻿using Domain.Interfaces.LogFiles;
-using Domain.Models.LogFiles;
+﻿using Domain.Interfaces;
+using Domain.Models;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repositories.LogFiles
 {
-    public class LogFileRepository : ILogFileRepository
+    public class TestReportRepository : ITestReportRepository
     {
         private readonly TestWatchContext _testWatchContext;
-        public LogFileRepository(TestWatchContext testWatchContext)
+        public TestReportRepository(TestWatchContext testWatchContext)
         {
             _testWatchContext = testWatchContext;
         }
 
-        public LogFile Add(LogFile logFile)
+        public TestReport Add(TestReport logFile)
         {
-            var isFirstPass = _testWatchContext.LogFiles.
+            var isFirstPass = _testWatchContext.TestReports.
                 Where(x => x.SerialNumber == logFile.SerialNumber && x.ProcessStep == logFile.ProcessStep).Any();
             logFile.IsFirstPass = !isFirstPass;
             logFile.RecordCreated = DateTime.Now;
-            _testWatchContext.LogFiles.Add(logFile);
+            _testWatchContext.TestReports.Add(logFile);
             _testWatchContext.SaveChanges();
             return logFile;
         }
 
-        public void Delete(LogFile logFile)
+        public void Delete(TestReport logFile)
         {
-            _testWatchContext.LogFiles.Remove(logFile);
+            _testWatchContext.TestReports.Remove(logFile);
             _testWatchContext.SaveChanges();
         }
 
-        public LogFile Get(int id)
+        public TestReport Get(int id)
         {
-            return _testWatchContext.LogFiles.SingleOrDefault(x => x.Id == id)!;
+            return _testWatchContext.TestReports.SingleOrDefault(x => x.Id == id)!;
         }
 
-        public IEnumerable<LogFile> GetAll(GetLogFilesQuery filter)
+        public IEnumerable<TestReport> GetAll(GetLogFilesQuery filter)
         {
             var query = _testWatchContext.
-              LogFiles.
+              TestReports.
               AsQueryable();
             query = AddFiltersOnQuery(query, filter);
             return query.OrderByDescending(x => x.TestDateTimeStarted).Take(1000).
             ToList();
         }
 
-        public void Update(LogFile logFile)
+        public void Update(TestReport logFile)
         {
-            logFile.TestDateTimeStarted = DateTime.Now;
-            _testWatchContext.LogFiles.Update(logFile);
+            _testWatchContext.TestReports.Update(logFile);
             _testWatchContext.SaveChanges();
         }
 
-        public IEnumerable<string> GetAllWorkstations()
+        public IEnumerable<Workstation> GetAllWorkstations()
         {
             return _testWatchContext.
-                LogFiles.
+                TestReports.
                 AsEnumerable().
                 DistinctBy(x => x.Workstation).
                 Select(x => x.Workstation).
@@ -65,13 +64,13 @@ namespace Infrastructure.Repositories.LogFiles
         public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
         {
             var currentTime = new DateTime(2022, 11, 10, 18, 0, 0);
-            var query = _testWatchContext.LogFiles.
+            var query = _testWatchContext.TestReports.
                 Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1)).
                 Where(x => x.IsFirstPass == true).AsEnumerable().GroupBy(x => x.Workstation);
 
             Dictionary<string, IEnumerable<YieldPoint>> yieldPoints = new();
 
-            foreach (IGrouping<string, LogFile> workstationGroup in query)
+            foreach (IGrouping<string, TestReport> workstationGroup in query)
             {
                 List<YieldPoint> workstationYieldPoints = new();
                 foreach (var hour in Enumerable.Range(0, 25))
@@ -110,7 +109,7 @@ namespace Infrastructure.Repositories.LogFiles
             return yieldPoints;
         }
 
-        private bool IsYieldPointOk(IEnumerable<LogFile> dataSet)
+        private bool IsYieldPointOk(IEnumerable<TestReport> dataSet)
         {
             if (dataSet.Count() == 0)
             {
@@ -139,9 +138,10 @@ namespace Infrastructure.Repositories.LogFiles
             return true;
         }
 
-        private IQueryable<LogFile> AddFiltersOnQuery(IQueryable<LogFile> query, GetLogFilesQuery filters)
+        private IQueryable<TestReport> AddFiltersOnQuery(IQueryable<TestReport> query, GetLogFilesQuery filters)
         {
-            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation)) : query;
+            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation.Name)) : query;
+            query = filters.firstPass != null ? query.Where(x => x.IsFirstPass == filters.firstPass) : query;
             query = filters.SerialNumber?.FirstOrDefault() != null && filters.SerialNumber.Length != 0 ? query.Where(x => filters.SerialNumber.Contains(x.SerialNumber)) : query;
             query = filters.Dut?.FirstOrDefault() != null && filters.Dut.Length != 0 ? query.Where(x => filters.Dut.Contains(x.FixtureSocket)) : query;
             query = filters.Failure?.FirstOrDefault() != null && filters.Failure.Length != 0 ? query.Where(x => x.Failure.Contains(filters.Failure[0])) : query;

@@ -1,5 +1,5 @@
-﻿using Application.DTO.LogFiles;
-using Application.Interfaces.LogFiles;
+﻿using Application.DTO.TestReport;
+using Application.Interfaces.TestReport;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -7,17 +7,17 @@ namespace WebAPI.Controllers.LogFiles
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LogFileController : ControllerBase
+    public class TestReportController : ControllerBase
     {
-        private readonly ILogFileService _logFileService;
-        public LogFileController(ILogFileService logFileService)
+        private readonly ITestReportService _logFileService;
+        public TestReportController(ITestReportService logFileService)
         {
             _logFileService = logFileService;
         }
 
         [SwaggerOperation(Summary = "Gets Log Files according to filter values")]
         [HttpGet]
-        public IActionResult Get([FromQuery] GetLogFilesFilter logFileFilterParameters)
+        public IActionResult Get([FromQuery] GetTestReportFilter logFileFilterParameters)
         {
             var filteredLogFiles = _logFileService.GetAllLogFiles(logFileFilterParameters);
             return Ok(filteredLogFiles);
@@ -34,7 +34,7 @@ namespace WebAPI.Controllers.LogFiles
 
         [SwaggerOperation(Summary = "Create new log file")]
         [HttpPost]
-        public IActionResult Create(CreateLogFileDTO newLogFile)
+        public IActionResult Create(CreateTestReportDTO newLogFile)
         {
             var logFile = _logFileService.AddNewLogFile(newLogFile);
             return Created($"api/logfiles/{logFile.Id}", logFile);
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers.LogFiles
 
         [SwaggerOperation(Summary = "Updates existing log file")]
         [HttpPut]
-        public IActionResult Update(UpdateLogFileDTO updateLogFile)
+        public IActionResult Update(UpdateTestReportDTO updateLogFile)
         {
             _logFileService.UpdateLogFile(updateLogFile);
             return NoContent();

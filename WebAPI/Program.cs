@@ -1,20 +1,21 @@
-using Application.Interfaces.LogFiles;
+using Application.Interfaces.TestReport;
 using Application.Interfaces.Workstations;
 using Application.Mappings;
 using Application.Services.LogFiles;
 using Application.Services.Workstations;
-using Domain.Interfaces.LogFiles;
-using Domain.Interfaces.Workstations;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories.LogFiles;
 using Infrastructure.Repositories.Workstations;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.WorkerService;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<ILogFileRepository, LogFileRepository>();
-builder.Services.AddScoped<ILogFileService, LogFileService>();
+builder.Services.AddHostedService<Worker>();
+builder.Services.AddScoped<ITestReportRepository, TestReportRepository>();
+builder.Services.AddScoped<ITestReportService, TestReportService>();
 builder.Services.AddScoped<IWorkstationRepository, WorkstationRepository>();
 builder.Services.AddScoped<IWorkstationService, WorkstationService>();
 builder.Services.AddDbContext<TestWatchContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestWatch")));

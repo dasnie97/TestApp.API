@@ -1,6 +1,7 @@
-﻿using Domain.Interfaces.Workstations;
-using Domain.Models.Workstations;
+﻿using Domain.Interfaces;
+using Domain.Models;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.Workstations
 {
@@ -28,7 +29,7 @@ namespace Infrastructure.Repositories.Workstations
 
         public IEnumerable<Workstation> Get()
         {
-            return _testWatchContext.Workstations;
+            return _testWatchContext.Workstations.AsNoTracking();
         }
 
         public Workstation Update(Workstation workstation)
