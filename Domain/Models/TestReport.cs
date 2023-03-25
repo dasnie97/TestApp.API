@@ -1,5 +1,4 @@
 ﻿using ProductTest.Common;
-using ProductTest.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,9 +16,7 @@ public class TestReport : TestReportBase
     public DateTime RecordCreated { get; set; }
 
     public TestReport() : base(string.Empty,
-                                TestStatus.Error,
                                 string.Empty,
-                                DateTime.MinValue,
                                 new List<TestStepBase>())
     { }
 }
