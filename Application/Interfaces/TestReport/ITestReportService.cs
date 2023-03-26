@@ -11,6 +11,6 @@ public interface ITestReportService
     TestReportDTO AddNewLogFile(CreateTestReportDTO logFile);
     void UpdateLogFile(UpdateTestReportDTO logFile);
     void DeleteLogFile(int id);
-    IEnumerable<WorkstationDTO> GetAllWorkstations();
+    IEnumerable<string> GetAllWorkstations();
     Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints();
 }

@@ -8,6 +8,7 @@ using Infrastructure.Data;
 using Infrastructure.Repositories.LogFiles;
 using Infrastructure.Repositories.Workstations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using WebAPI.WorkerService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +29,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c=>
 {
     c.EnableAnnotations();
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title="WebAPI", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title="WebAPI", Version = "v1" });
+    c.MapType<TimeSpan>(() => new OpenApiSchema { Type = "string", Format = "time-span" });
 });
 
 var app = builder.Build();

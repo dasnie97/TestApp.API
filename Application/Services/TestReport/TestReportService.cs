@@ -53,9 +53,9 @@ namespace Application.Services.LogFiles
             _logFileRepository.Update(logFile);
         }
 
-        public IEnumerable<WorkstationDTO> GetAllWorkstations()
+        public IEnumerable<string> GetAllWorkstations()
         {
-            return _mapper.Map<IEnumerable<WorkstationDTO>>(_logFileRepository.GetAllWorkstations());
+            return _mapper.Map<IEnumerable<string>>(_logFileRepository.GetAllWorkstations());
         }
 
         public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
