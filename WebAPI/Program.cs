@@ -20,8 +20,7 @@ builder.Services.AddScoped<ITestReportService, TestReportService>();
 builder.Services.AddScoped<IWorkstationRepository, WorkstationRepository>();
 builder.Services.AddScoped<IWorkstationService, WorkstationService>();
 builder.Services.AddDbContext<TestWatchContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestWatch")));
-
-builder.Services.AddSingleton(AutoMapperConfig.Initialize());
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

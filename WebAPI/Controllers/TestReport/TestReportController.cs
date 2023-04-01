@@ -32,7 +32,11 @@ namespace WebAPI.Controllers.LogFiles
             return Ok(logFile);
         }
 
-        [SwaggerOperation(Summary = "Create new log file")]
+        /// <summary>
+        /// Creates new TestReport
+        /// </summary>
+        /// <param name="newLogFile">TestReport object</param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Create(CreateTestReportDTO newLogFile)
         {

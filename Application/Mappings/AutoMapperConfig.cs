@@ -3,19 +3,18 @@ using Application.DTO.Workstations;
 using AutoMapper;
 using Domain.Models;
 
-namespace Application.Mappings
+namespace Application.Mappings;
+
+public class MappingProfile : Profile
 {
-    public static class AutoMapperConfig
+    public MappingProfile()
     {
-        public static IMapper Initialize() => new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<TestReport, TestReportDTO>();
-            cfg.CreateMap<CreateTestReportDTO, TestReport>();
-            cfg.CreateMap<UpdateTestReportDTO, TestReport>();
-            cfg.CreateMap<GetTestReportFilter, GetLogFilesQuery>();
-            cfg.CreateMap<Workstation, WorkstationDTO>();
-            cfg.CreateMap<AddWorkstationDTO, Workstation>();
-            cfg.CreateMap<WorkstationDTO, Workstation>();
-        }).CreateMapper();
+        CreateMap<TestReport, TestReportDTO>().ReverseMap();
+        CreateMap<CreateTestReportDTO, TestReport>().ForMember(dest => dest.Workstation, opt => opt.MapFrom(src => new Workstation(src.WorkstationName, string.Empty)));
+        CreateMap<UpdateTestReportDTO, TestReport>();
+        CreateMap<GetTestReportFilter, GetLogFilesQuery>();
+        CreateMap<Workstation, WorkstationDTO>();
+        CreateMap<AddWorkstationDTO, Workstation>();
+        CreateMap<WorkstationDTO, Workstation>();
     }
 }

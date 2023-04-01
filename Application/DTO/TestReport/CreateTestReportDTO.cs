@@ -1,6 +1,4 @@
-﻿using Domain.Models;
-
-namespace Application.DTO.TestReport;
+﻿namespace Application.DTO.TestReport;
 
 public class CreateTestReportDTO
 {

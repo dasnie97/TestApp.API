@@ -18,6 +18,13 @@ namespace Infrastructure.Repositories.LogFiles
                 Where(x => x.SerialNumber == logFile.SerialNumber && x.ProcessStep == logFile.ProcessStep).Any();
             logFile.IsFirstPass = !isFirstPass;
             logFile.RecordCreated = DateTime.Now;
+
+            var workstationDoesntExists = !_testWatchContext.Workstations.Where(w => w.Name == logFile.Workstation.Name).Any();
+            if (workstationDoesntExists)
+            {
+                _testWatchContext.Workstations.Add(logFile.Workstation);
+            }
+
             _testWatchContext.TestReports.Add(logFile);
             _testWatchContext.SaveChanges();
             return logFile;
@@ -50,7 +57,7 @@ namespace Infrastructure.Repositories.LogFiles
             _testWatchContext.SaveChanges();
         }
 
-        public IEnumerable<string> GetAllWorkstations()
+        public IEnumerable<Workstation> GetAllWorkstations()
         {
             return _testWatchContext.
                 TestReports.
@@ -140,7 +147,7 @@ namespace Infrastructure.Repositories.LogFiles
 
         private IQueryable<TestReport> AddFiltersOnQuery(IQueryable<TestReport> query, GetLogFilesQuery filters)
         {
-            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation)) : query;
+            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation.Name)) : query;
             query = filters.firstPass != null ? query.Where(x => x.IsFirstPass == filters.firstPass) : query;
             query = filters.SerialNumber?.FirstOrDefault() != null && filters.SerialNumber.Length != 0 ? query.Where(x => filters.SerialNumber.Contains(x.SerialNumber)) : query;
             query = filters.Dut?.FirstOrDefault() != null && filters.Dut.Length != 0 ? query.Where(x => filters.Dut.Contains(x.FixtureSocket)) : query;

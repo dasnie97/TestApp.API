@@ -1,12 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace Domain.Models;
 
-namespace Domain.Models;
-
-[Table("Workstations")]
 public class Workstation
 {
-    [Key]
     public int Id { get; private set; }
     public string Name { get; set; }
     public string OperatorName { get; set; }

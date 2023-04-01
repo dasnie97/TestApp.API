@@ -1,22 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using ProductTest.Common;
 
 namespace Domain.Models;
 
-[Table("TestReports")]
 public class TestReport
 {
-    [Key]
     public int Id { get; private set; }
-    public List<TestStep> TestSteps { get; set; }
     public bool IsFirstPass { get; set; }
+    public bool IsFalseCall { get; set; }
     public string? ProcessStep { get; set; }
-    public string Workstation { get; set; }
-    public DateTime RecordCreated { get; set; }
+    public int WorkstationId { get; set; }
+    public Workstation Workstation { get; set; }
     public string SerialNumber { get; set; }
-    public DateTime TestDateTimeStarted { get; set; }
     public string Status { get; set; }
     public string Failure { get; set; }
     public string? FixtureSocket { get; set; }
+    public DateTime TestDateTimeStarted { get; set; }
     public TimeSpan? TestingTime { get; set; }
+    public DateTime RecordCreated { get; set; }
 }

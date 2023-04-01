@@ -9,6 +9,6 @@ public interface ITestReportRepository
     TestReport Get(int id);
     IEnumerable<TestReport> GetAll(GetLogFilesQuery getLogFilesQuery);
     void Update(TestReport logFile);
-    IEnumerable<string> GetAllWorkstations();
+    IEnumerable<Workstation> GetAllWorkstations();
     Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints();
 }
