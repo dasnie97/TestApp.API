@@ -15,28 +15,24 @@ namespace WebAPI.Controllers.LogFiles
             _logFileService = logFileService;
         }
 
-        [SwaggerOperation(Summary = "Gets Log Files according to filter values")]
+        [SwaggerOperation(Summary = "Gets test reports according to filter values")]
         [HttpGet]
-        public IActionResult Get([FromQuery] GetTestReportFilter logFileFilterParameters)
+        public IActionResult GetFiltered([FromQuery] GetTestReportFilter logFileFilterParameters)
         {
-            var filteredLogFiles = _logFileService.GetAllLogFiles(logFileFilterParameters);
+            var filteredLogFiles = _logFileService.GetTestReports(logFileFilterParameters);
             return Ok(filteredLogFiles);
         }
 
-        [SwaggerOperation(Summary = "Retrieves log file by id")]
+        [SwaggerOperation(Summary = "Gets test report by id")]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var logFile = _logFileService.GetLogFileById(id);
+            var logFile = _logFileService.GetTestReportByID(id);
             if (logFile == null) return NotFound();
             return Ok(logFile);
         }
 
-        /// <summary>
-        /// Creates new TestReport
-        /// </summary>
-        /// <param name="newLogFile">TestReport object</param>
-        /// <returns></returns>
+        [SwaggerOperation(Summary = "Creates new test report")]
         [HttpPost]
         public IActionResult Create(CreateTestReportDTO newLogFile)
         {

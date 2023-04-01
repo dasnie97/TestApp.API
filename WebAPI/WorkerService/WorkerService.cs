@@ -33,7 +33,7 @@ namespace WebAPI.WorkerService
                     foreach (var workstation in workstations)
                     {
                         filter.workstation = new string[] {workstation.Name};
-                        var logFiles = logfileService.GetAllLogFiles(filter);
+                        var logFiles = logfileService.GetTestReports(filter);
                         if (logFiles.Count() == 0)
                         {
                             workstation.State = "Idle";

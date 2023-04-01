@@ -9,8 +9,8 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<TestReport, TestReportDTO>().ReverseMap();
-        CreateMap<CreateTestReportDTO, TestReport>().ForMember(dest => dest.Workstation, opt => opt.MapFrom(src => new Workstation(src.WorkstationName, string.Empty)));
+        CreateMap<TestReport, TestReportDTO>();
+        CreateMap<CreateTestReportDTO, TestReport>();
         CreateMap<UpdateTestReportDTO, TestReport>();
         CreateMap<GetTestReportFilter, GetLogFilesQuery>();
         CreateMap<Workstation, WorkstationDTO>();

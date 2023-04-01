@@ -33,14 +33,14 @@ namespace Application.Services.LogFiles
             _logFileRepository.Delete(logFile);
         }
 
-        public IEnumerable<TestReportDTO> GetAllLogFiles(GetTestReportFilter? getLogFilesFilter = null)
+        public IEnumerable<TestReportDTO> GetTestReports(GetTestReportFilter? getLogFilesFilter = null)
         {
             var filter = _mapper.Map<GetLogFilesQuery>(getLogFilesFilter);
-            var filteredLogFiles = _logFileRepository.GetAll(filter);
+            var filteredLogFiles = _logFileRepository.Get(filter);
             return _mapper.Map<IEnumerable<TestReportDTO>>(filteredLogFiles);
         }
 
-        public TestReportDTO GetLogFileById(int id)
+        public TestReportDTO GetTestReportByID(int id)
         {
             var logFile = _logFileRepository.Get(id);
             return _mapper.Map<TestReportDTO>(logFile);

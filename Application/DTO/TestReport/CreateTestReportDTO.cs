@@ -8,7 +8,6 @@ public class CreateTestReportDTO
     public string? ProcessStep { get; set; }
     public string? FixtureSocket { get; set; }
     public string? Failure { get; set; }
-    public string? Operator { get; set; }
     public DateTime TestDateTimeStarted { get; set; }
     public TimeSpan? TestingTime { get; set; }
 }

@@ -15,12 +15,6 @@ public class TestWatchContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TestReport>()
-            .HasOne(w => w.Workstation)
-            .WithMany()
-            .HasForeignKey(w => w.WorkstationId)
-            .IsRequired();
-
-        modelBuilder.Entity<TestReport>()
             .ToTable("TestReports")
             .HasKey(t => t.Id);
 

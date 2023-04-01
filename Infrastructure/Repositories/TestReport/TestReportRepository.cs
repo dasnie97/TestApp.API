@@ -19,10 +19,10 @@ namespace Infrastructure.Repositories.LogFiles
             logFile.IsFirstPass = !isFirstPass;
             logFile.RecordCreated = DateTime.Now;
 
-            var workstationDoesntExists = !_testWatchContext.Workstations.Where(w => w.Name == logFile.Workstation.Name).Any();
+            var workstationDoesntExists = !_testWatchContext.Workstations.Where(w => w.Name == logFile.Workstation).Any();
             if (workstationDoesntExists)
             {
-                _testWatchContext.Workstations.Add(logFile.Workstation);
+                _testWatchContext.Workstations.Add(new Workstation(logFile.Workstation));
             }
 
             _testWatchContext.TestReports.Add(logFile);
@@ -41,7 +41,7 @@ namespace Infrastructure.Repositories.LogFiles
             return _testWatchContext.TestReports.SingleOrDefault(x => x.Id == id)!;
         }
 
-        public IEnumerable<TestReport> GetAll(GetLogFilesQuery filter)
+        public IEnumerable<TestReport> Get(GetLogFilesQuery filter = null)
         {
             var query = _testWatchContext.
               TestReports.
@@ -57,7 +57,7 @@ namespace Infrastructure.Repositories.LogFiles
             _testWatchContext.SaveChanges();
         }
 
-        public IEnumerable<Workstation> GetAllWorkstations()
+        public IEnumerable<string> GetAllWorkstations()
         {
             return _testWatchContext.
                 TestReports.
@@ -147,7 +147,7 @@ namespace Infrastructure.Repositories.LogFiles
 
         private IQueryable<TestReport> AddFiltersOnQuery(IQueryable<TestReport> query, GetLogFilesQuery filters)
         {
-            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation.Name)) : query;
+            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation)) : query;
             query = filters.firstPass != null ? query.Where(x => x.IsFirstPass == filters.firstPass) : query;
             query = filters.SerialNumber?.FirstOrDefault() != null && filters.SerialNumber.Length != 0 ? query.Where(x => filters.SerialNumber.Contains(x.SerialNumber)) : query;
             query = filters.Dut?.FirstOrDefault() != null && filters.Dut.Length != 0 ? query.Where(x => filters.Dut.Contains(x.FixtureSocket)) : query;
