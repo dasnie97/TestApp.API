@@ -2,7 +2,7 @@
 
 public class CreateTestReportDTO
 {
-    public string Workstation { get; set; } = null!;
+    //public string Workstation { get; set; } = null!;
     public string SerialNumber { get; set; } = null!;
     public string Status { get; set; } = null!;
     public string? ProcessStep { get; set; }

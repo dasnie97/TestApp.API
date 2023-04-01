@@ -21,5 +21,8 @@ public class TestWatchContext : DbContext
         modelBuilder.Entity<Workstation>()
             .ToTable("Workstations")
             .HasKey(w => w.Id);
+
+        modelBuilder.Entity<TestReport>()
+            .Ignore(t => t.TestSteps);
     }
 }
