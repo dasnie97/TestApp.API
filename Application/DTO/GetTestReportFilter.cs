@@ -1,4 +1,4 @@
-﻿namespace Application.DTO.TestReport;
+﻿namespace Application.DTO;
 
 public class GetTestReportFilter
 {

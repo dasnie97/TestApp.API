@@ -1,10 +1,10 @@
-﻿using Application.DTO.Workstations;
+﻿using ProductTest.DTO;
 
 namespace Application.Interfaces.Workstations;
 
 public interface IWorkstationService
 {
-    WorkstationDTO Add(AddWorkstationDTO workstation);
+    WorkstationDTO Add(CreateWorkstationDTO workstation);
     void Delete(int id);
     IEnumerable<WorkstationDTO> Get();
     WorkstationDTO Update(WorkstationDTO workstation);

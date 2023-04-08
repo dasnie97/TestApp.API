@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.LogFiles
 {
@@ -19,10 +20,12 @@ namespace Infrastructure.Repositories.LogFiles
             logFile.IsFirstPass = !isFirstPass;
             logFile.RecordCreated = DateTime.Now;
 
-            var workstationDoesntExists = !_testWatchContext.Workstations.Where(w => w.Name == logFile.Workstation).Any();
+            var workstationDoesntExists = !_testWatchContext.Workstations.Where(w => w.Name == logFile.Workstation.Name).Any();
             if (workstationDoesntExists)
             {
-                _testWatchContext.Workstations.Add(new Workstation(logFile.Workstation));
+                var newWorkstation = new Workstation(logFile.Workstation.Name);
+                _testWatchContext.Workstations.Add(newWorkstation);
+                logFile.Workstation = newWorkstation;
             }
 
             _testWatchContext.TestReports.Add(logFile);
@@ -45,6 +48,7 @@ namespace Infrastructure.Repositories.LogFiles
         {
             var query = _testWatchContext.
               TestReports.
+              Include(t=>t.Workstation).
               AsQueryable();
             query = AddFiltersOnQuery(query, filter);
             return query.OrderByDescending(x => x.TestDateTimeStarted).Take(1000).
@@ -62,8 +66,8 @@ namespace Infrastructure.Repositories.LogFiles
             return _testWatchContext.
                 TestReports.
                 AsEnumerable().
-                DistinctBy(x => x.Workstation).
-                Select(x => x.Workstation).
+                DistinctBy(x => x.Workstation.Name).
+                Select(x => x.Workstation.Name).
                 OrderBy(x => x).
                 ToList();
         }
@@ -96,8 +100,8 @@ namespace Infrastructure.Repositories.LogFiles
                         });
                         continue;
                     }
-                    float passed = records.Count(x => x.Status == "Passed");
-                    float failed = records.Count(x => x.Status == "Failed");
+                    float passed = records.Count(x => x.Status == TestStatus.Passed);
+                    float failed = records.Count(x => x.Status == TestStatus.Failed);
                     float total = records.Count();
                     var tP = records.First().TestDateTimeStarted;
                     workstationYieldPoints.Add(new YieldPoint
@@ -124,7 +128,7 @@ namespace Infrastructure.Repositories.LogFiles
             }
             try
             {
-                var averageTestTime = dataSet.Where(x => x.Status == "Passed").Average(x => x.TestingTime!.Value.TotalSeconds);
+                var averageTestTime = dataSet.Where(x => x.Status == TestStatus.Passed).Average(x => x.TestingTime!.Value.TotalSeconds);
                 var minHourlyOutput = 1000 / averageTestTime;
 
                 if (averageTestTime == 0)
@@ -147,12 +151,12 @@ namespace Infrastructure.Repositories.LogFiles
 
         private IQueryable<TestReport> AddFiltersOnQuery(IQueryable<TestReport> query, GetLogFilesQuery filters)
         {
-            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation)) : query;
+            query = filters.Workstation?.FirstOrDefault() != null && filters.Workstation.Length != 0 ? query.Where(x => filters.Workstation.Contains(x.Workstation.Name)) : query;
             query = filters.firstPass != null ? query.Where(x => x.IsFirstPass == filters.firstPass) : query;
             query = filters.SerialNumber?.FirstOrDefault() != null && filters.SerialNumber.Length != 0 ? query.Where(x => filters.SerialNumber.Contains(x.SerialNumber)) : query;
             query = filters.Dut?.FirstOrDefault() != null && filters.Dut.Length != 0 ? query.Where(x => filters.Dut.Contains(x.FixtureSocket)) : query;
             query = filters.Failure?.FirstOrDefault() != null && filters.Failure.Length != 0 ? query.Where(x => x.Failure.Contains(filters.Failure[0])) : query;
-            query = filters.Result != null ? query.Where(x => x.Status == filters.Result) : query;
+            query = filters.Result != TestStatus.NotSet ? query.Where(x => x.Status == filters.Result) : query;
             query = filters.DateFrom != new DateTime() ? query.Where(x => x.TestDateTimeStarted >= filters.DateFrom) : query;
             query = filters.DateTo != new DateTime() ? query.Where(x => x.TestDateTimeStarted <= filters.DateTo) : query;
             return query;

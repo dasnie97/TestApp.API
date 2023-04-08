@@ -15,14 +15,22 @@ public class TestWatchContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TestReport>()
+            .HasOne(t => t.Workstation)
+            .WithMany()
+            .HasForeignKey(t=>t.WorkstationName)
+            .IsRequired();
+
+        modelBuilder.Entity<TestReport>()
             .ToTable("TestReports")
             .HasKey(t => t.Id);
 
         modelBuilder.Entity<Workstation>()
             .ToTable("Workstations")
-            .HasKey(w => w.Id);
+            .HasKey(w => w.Name);
 
         modelBuilder.Entity<TestReport>()
-            .Ignore(t => t.TestSteps);
+            .Property(t=>t.Status)
+            .HasConversion<string>();
+
     }
 }

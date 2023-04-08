@@ -1,14 +1,18 @@
-﻿using ProductTest.Common;
+﻿namespace Domain.Models;
 
-namespace Domain.Models;
-
-public class TestReport : ProductTest.Models.TestReport
+public class TestReport
 {
-    public int Id { get; private set; }
+    public int Id { get; set; }
+    public Workstation Workstation { get; set; }
+    public string WorkstationName { get; set; }
     public bool IsFirstPass { get; set; }
     public bool IsFalseCall { get; set; }
-    //TODO: Make this of WorkstationBase type
-    public new string Workstation { get; set; }
     public string? ProcessStep { get; set; }
+    public string SerialNumber { get; set; }
+    public TestStatus Status { get; set; }
+    public string Failure { get; set; }
+    public string? FixtureSocket { get; set; }
+    public DateTime TestDateTimeStarted { get; set; }
+    public TimeSpan? TestingTime { get; set; }
     public DateTime RecordCreated { get; set; }
 }

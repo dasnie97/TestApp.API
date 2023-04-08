@@ -1,4 +1,4 @@
-﻿using Application.DTO.Workstations;
+﻿using ProductTest.DTO;
 using Application.Interfaces.Workstations;
 using AutoMapper;
 using Domain.Interfaces;
@@ -16,7 +16,7 @@ namespace Application.Services.Workstations
             _workstationRepository= workstationRepository;
         }
 
-        public WorkstationDTO Add(AddWorkstationDTO workstation)
+        public WorkstationDTO Add(CreateWorkstationDTO workstation)
         {
             var mapped = _mapper.Map<Workstation>(workstation);
             _workstationRepository.Add(mapped);

@@ -1,4 +1,4 @@
-﻿using Application.DTO.Workstations;
+﻿using ProductTest.DTO;
 using Application.Interfaces.Workstations;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -17,7 +17,7 @@ namespace WebAPI.Controllers.Workstations
 
         [SwaggerOperation(Summary ="Create new workstation")]
         [HttpPost]
-        public IActionResult AddNewWorkstation(AddWorkstationDTO newWorkstation)
+        public IActionResult AddNewWorkstation(CreateWorkstationDTO newWorkstation)
         {
             var workstation = _workstationService.Add(newWorkstation);
             return Created($"api/workstation/{workstation.Id}", workstation);

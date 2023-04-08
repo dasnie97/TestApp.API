@@ -2,9 +2,9 @@
 
 public class Workstation
 {
-    public int Id { get; private set; }
+    public int Id { get; set; }
     public string Name { get; set; }
-    public string OperatorName { get; set; }
+    public string? OperatorName { get; set; }
     public string? Customer { get; set; }
     public string? PositionX { get; set; }
     public string? PositionY { get; set; }
