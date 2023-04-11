@@ -11,6 +11,7 @@ public class Workstation
     public string? State { get; set; }
     public DateTime RecordCreated { get; set; }
     public DateTime RecordUpdated { get; set; }
+    public ICollection<TestReport> TestReports { get; set; }
 
     public Workstation(string name = "", string operatorName = "")
     {

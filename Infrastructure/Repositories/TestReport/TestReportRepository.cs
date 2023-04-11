@@ -26,6 +26,18 @@ namespace Infrastructure.Repositories.LogFiles
                 var newWorkstation = new Workstation(logFile.Workstation.Name);
                 _testWatchContext.Workstations.Add(newWorkstation);
                 logFile.Workstation = newWorkstation;
+                try
+                {
+                    _testWatchContext.SaveChanges();
+                }
+                catch (DbUpdateException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("Cannot insert duplicate key"))
+                {
+                    _testWatchContext.Entry(logFile.Workstation).State = EntityState.Unchanged;
+                }
+            }
+            else
+            {
+                _testWatchContext.Entry(logFile.Workstation).State = EntityState.Unchanged;
             }
 
             _testWatchContext.TestReports.Add(logFile);
@@ -65,6 +77,7 @@ namespace Infrastructure.Repositories.LogFiles
         {
             return _testWatchContext.
                 TestReports.
+                Include(t=>t.Workstation).
                 AsEnumerable().
                 DistinctBy(x => x.Workstation.Name).
                 Select(x => x.Workstation.Name).
