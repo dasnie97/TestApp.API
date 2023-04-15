@@ -16,7 +16,7 @@ namespace Infrastructure.Repositories.LogFiles
         public TestReport Add(TestReport logFile)
         {
             var isFirstPass = _testWatchContext.TestReports.
-                Where(x => x.SerialNumber == logFile.SerialNumber && x.ProcessStep == logFile.ProcessStep).Any();
+                Where(x => x.SerialNumber == logFile.SerialNumber && x.Workstation.ProcessStep == logFile.Workstation.ProcessStep).Any();
             logFile.IsFirstPass = !isFirstPass;
             logFile.RecordCreated = DateTime.Now;
 

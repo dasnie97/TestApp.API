@@ -7,7 +7,6 @@ public class TestReport
     public string WorkstationName { get; set; }
     public bool IsFirstPass { get; set; }
     public bool IsFalseCall { get; set; }
-    public string? ProcessStep { get; set; }
     public string SerialNumber { get; set; }
     public TestStatus Status { get; set; }
     public string Failure { get; set; }
