@@ -2,6 +2,7 @@
 using Application.Interfaces.Workstations;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Application.DTO;
 
 namespace WebAPI.Controllers.Workstations
 {
@@ -23,13 +24,21 @@ namespace WebAPI.Controllers.Workstations
             return Created($"api/workstation/{workstation.Id}", workstation);
         }
 
-        [SwaggerOperation(Summary = "Get workstations")]
+        [SwaggerOperation(Summary = "Gets workstations according to filter values")]
         [HttpGet]
-        public IActionResult GetWorkstations()
+        public IActionResult GetFiltered([FromQuery] GetWorkstationFilter workstationFilterParameters)
         {
-            var workstations = _workstationService.Get();
-            return Ok(workstations);
+            var filteredWorkstations = _workstationService.Get(workstationFilterParameters);
+            return Ok(filteredWorkstations);
         }
+
+        //[SwaggerOperation(Summary = "Get workstations")]
+        //[HttpGet]
+        //public IActionResult GetWorkstations()
+        //{
+        //    var workstations = _workstationService.Get();
+        //    return Ok(workstations);
+        //}
 
         [SwaggerOperation(Summary ="Update workstation")]
         [HttpPut]

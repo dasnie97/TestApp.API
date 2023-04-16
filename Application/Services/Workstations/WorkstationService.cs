@@ -3,6 +3,7 @@ using Application.Interfaces.Workstations;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Models;
+using Application.DTO;
 
 namespace Application.Services.Workstations
 {
@@ -29,10 +30,18 @@ namespace Application.Services.Workstations
             _workstationRepository.Delete(workstationToRemove);
         }
 
+        public IEnumerable<WorkstationDTO> Get(GetWorkstationFilter? getWorkstationFilter = null)
+        {
+            var filter = _mapper.Map<GetWorkstationsQuery>(getWorkstationFilter);
+            var filteredWorkstations = _workstationRepository.Get(filter);
+            return _mapper.Map<IEnumerable<WorkstationDTO>>(filteredWorkstations);
+        }
+
         public IEnumerable<WorkstationDTO> Get()
         {
             var workstations = _workstationRepository.Get();
             return _mapper.Map<IEnumerable<WorkstationDTO>>(workstations);
+
         }
 
         public WorkstationDTO Update(WorkstationDTO workstation)

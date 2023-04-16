@@ -13,6 +13,7 @@ public class MappingProfile : Profile
         CreateMap<CreateTestReportDTO, TestReport>().ForMember(dest => dest.Workstation, opt=>opt.MapFrom(src=>new Workstation(src.Workstation, "")));
         CreateMap<UpdateTestReportDTO, TestReport>();
         CreateMap<GetTestReportFilter, GetLogFilesQuery>();
+        CreateMap<GetWorkstationFilter, GetWorkstationsQuery>();
         CreateMap<Workstation, WorkstationDTO>();
         CreateMap<CreateWorkstationDTO, Workstation>();
         CreateMap<WorkstationDTO, Workstation>();
