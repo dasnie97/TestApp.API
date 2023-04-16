@@ -21,7 +21,7 @@ namespace WebAPI.Controllers.Workstations
         public IActionResult AddNewWorkstation(CreateWorkstationDTO newWorkstation)
         {
             var workstation = _workstationService.Add(newWorkstation);
-            return Created($"api/workstation/{workstation.Id}", workstation);
+            return Created($"api/workstation/{workstation.Name}", workstation);
         }
 
         [SwaggerOperation(Summary = "Gets workstations according to filter values")]

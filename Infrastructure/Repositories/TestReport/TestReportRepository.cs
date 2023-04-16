@@ -13,36 +13,46 @@ namespace Infrastructure.Repositories.LogFiles
             _testWatchContext = testWatchContext;
         }
 
-        public TestReport Add(TestReport logFile)
+        public TestReport Add(TestReport testReport)
         {
-            var isFirstPass = _testWatchContext.TestReports.
-                Where(x => x.SerialNumber == logFile.SerialNumber && x.Workstation.ProcessStep == logFile.Workstation.ProcessStep).Any();
-            logFile.IsFirstPass = !isFirstPass;
-            logFile.RecordCreated = DateTime.Now;
+            var processStep = _testWatchContext.Workstations.AsNoTracking().Where(w => w.Name == testReport.Workstation.Name).FirstOrDefault().ProcessStep;
+            var recordsWithSameSN = _testWatchContext.TestReports.Where(t=>t.SerialNumber == testReport.SerialNumber);
+            var recordsWithSameSNAndProcessStep = recordsWithSameSN.Where(t=>t.Workstation.ProcessStep == processStep);
 
-            var workstationDoesntExists = !_testWatchContext.Workstations.Where(w => w.Name == logFile.Workstation.Name).Any();
+            if (recordsWithSameSNAndProcessStep.Any())
+            {
+                testReport.IsFirstPass = false;
+            }
+            else
+            {
+                testReport.IsFirstPass = true;
+            }
+
+            testReport.RecordCreated = DateTime.Now;
+
+            var workstationDoesntExists = !_testWatchContext.Workstations.Where(w => w.Name == testReport.Workstation.Name).Any();
             if (workstationDoesntExists)
             {
-                var newWorkstation = new Workstation(logFile.Workstation.Name);
+                var newWorkstation = new Workstation(testReport.Workstation.Name);
                 _testWatchContext.Workstations.Add(newWorkstation);
-                logFile.Workstation = newWorkstation;
+                testReport.Workstation = newWorkstation;
                 try
                 {
                     _testWatchContext.SaveChanges();
                 }
                 catch (DbUpdateException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("Cannot insert duplicate key"))
                 {
-                    _testWatchContext.Entry(logFile.Workstation).State = EntityState.Unchanged;
+                    _testWatchContext.Entry(testReport.Workstation).State = EntityState.Unchanged;
                 }
             }
             else
             {
-                _testWatchContext.Entry(logFile.Workstation).State = EntityState.Unchanged;
+                _testWatchContext.Entry(testReport.Workstation).State = EntityState.Unchanged;
             }
 
-            _testWatchContext.TestReports.Add(logFile);
+            _testWatchContext.TestReports.Add(testReport);
             _testWatchContext.SaveChanges();
-            return logFile;
+            return testReport;
         }
 
         public void Delete(TestReport logFile)
