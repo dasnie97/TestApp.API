@@ -1,4 +1,4 @@
-﻿using Application.DTO.TestReport;
+﻿using Application.DTO;
 using Application.Interfaces.TestReport;
 using Application.Interfaces.Workstations;
 

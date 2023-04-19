@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TestWatchContext))]
-    [Migration("20221103170831_v2")]
-    partial class v2
+    [Migration("20230404150600_RecreatedTables")]
+    partial class RecreatedTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Domain.Models.LogFile", b =>
+            modelBuilder.Entity("Domain.Models.TestReport", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,12 +33,19 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Failure")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FixtureSocket")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Operator")
+                    b.Property<bool>("IsFalseCall")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFirstPass")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProcessStep")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RecordCreated")
@@ -46,8 +53,7 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -59,82 +65,60 @@ namespace Infrastructure.Migrations
                     b.Property<TimeSpan?>("TestingTime")
                         .HasColumnType("time");
 
-                    b.Property<string>("Workstation")
+                    b.Property<string>("WorkstationName")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("LogFiles");
+                    b.HasIndex("WorkstationName");
+
+                    b.ToTable("TestReports", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.TestStep", b =>
+            modelBuilder.Entity("Domain.Models.Workstation", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("LogfileId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LowerLimit")
-                        .IsRequired()
+                    b.Property<string>("Customer")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OperatorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PositionX")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PositionY")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RecordCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TestDateTimeStarted")
+                    b.Property<DateTime>("RecordUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
+                    b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Name");
 
-                    b.Property<string>("UpperLimit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LogfileId");
-
-                    b.ToTable("TestStep");
+                    b.ToTable("Workstations", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.TestStep", b =>
+            modelBuilder.Entity("Domain.Models.TestReport", b =>
                 {
-                    b.HasOne("Domain.Models.LogFile", "Logfile")
-                        .WithMany("TestSteps")
-                        .HasForeignKey("LogfileId")
+                    b.HasOne("Domain.Models.Workstation", "Workstation")
+                        .WithMany()
+                        .HasForeignKey("WorkstationName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Logfile");
-                });
-
-            modelBuilder.Entity("Domain.Models.LogFile", b =>
-                {
-                    b.Navigation("TestSteps");
+                    b.Navigation("Workstation");
                 });
 #pragma warning restore 612, 618
         }
