@@ -24,9 +24,9 @@ namespace Application.Services.Workstations
             return _mapper.Map<WorkstationDTO>(mapped);
         }
 
-        public void Delete(int id)
+        public void Delete(string name)
         {
-            var workstationToRemove = _workstationRepository.Get().Where(x => x.Id == id).First();
+            var workstationToRemove = _workstationRepository.Get().Where(x => x.Name == name).First();
             _workstationRepository.Delete(workstationToRemove);
         }
 

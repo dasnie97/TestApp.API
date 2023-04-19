@@ -50,9 +50,9 @@ namespace WebAPI.Controllers.Workstations
 
         [SwaggerOperation(Summary ="Delete workstation")]
         [HttpDelete]
-        public IActionResult DeleteWorkstation(int id)
+        public IActionResult DeleteWorkstation(string name)
         {
-            _workstationService.Delete(id);
+            _workstationService.Delete(name);
             return NoContent();
         }
     }
