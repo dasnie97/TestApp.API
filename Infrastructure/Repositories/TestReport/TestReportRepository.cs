@@ -100,7 +100,7 @@ namespace Infrastructure.Repositories.LogFiles
             var currentTime = new DateTime(2022, 11, 10, 18, 0, 0);
             var query = _testWatchContext.TestReports.
                 Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1)).
-                Where(x => x.IsFirstPass == true).AsEnumerable().GroupBy(x => x.Workstation);
+                Where(x => x.IsFirstPass == true).AsEnumerable().GroupBy(x => x.WorkstationName);
 
             Dictionary<string, IEnumerable<YieldPoint>> yieldPoints = new();
 
