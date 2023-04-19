@@ -1,5 +1,5 @@
-﻿using Application.DTO.TestReport;
-using Application.DTO.Workstations;
+﻿using Application.DTO;
+using ProductTest.DTO;
 using Domain.Models;
 
 namespace Application.Interfaces.TestReport;

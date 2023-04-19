@@ -20,9 +20,17 @@ public class TestWatchContext : DbContext
 
         modelBuilder.Entity<Workstation>()
             .ToTable("Workstations")
-            .HasKey(w => w.Id);
+            .HasKey(w => w.Name);
+
+        modelBuilder.Entity<Workstation>()
+            .HasMany(w => w.TestReports)
+            .WithOne(t => t.Workstation)
+            .HasForeignKey(w => w.WorkstationName)
+            .HasPrincipalKey(t => t.Name);
 
         modelBuilder.Entity<TestReport>()
-            .Ignore(t => t.TestSteps);
+            .Property(t=>t.Status)
+            .HasConversion<string>();
+
     }
 }

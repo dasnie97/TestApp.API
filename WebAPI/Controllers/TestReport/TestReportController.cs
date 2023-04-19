@@ -1,4 +1,5 @@
-﻿using Application.DTO.TestReport;
+﻿using Application.DTO;
+using ProductTest.DTO;
 using Application.Interfaces.TestReport;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

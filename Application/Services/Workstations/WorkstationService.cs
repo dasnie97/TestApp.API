@@ -1,8 +1,9 @@
-﻿using Application.DTO.Workstations;
+﻿using ProductTest.DTO;
 using Application.Interfaces.Workstations;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Models;
+using Application.DTO;
 
 namespace Application.Services.Workstations
 {
@@ -16,23 +17,31 @@ namespace Application.Services.Workstations
             _workstationRepository= workstationRepository;
         }
 
-        public WorkstationDTO Add(AddWorkstationDTO workstation)
+        public WorkstationDTO Add(CreateWorkstationDTO workstation)
         {
             var mapped = _mapper.Map<Workstation>(workstation);
             _workstationRepository.Add(mapped);
             return _mapper.Map<WorkstationDTO>(mapped);
         }
 
-        public void Delete(int id)
+        public void Delete(string name)
         {
-            var workstationToRemove = _workstationRepository.Get().Where(x => x.Id == id).First();
+            var workstationToRemove = _workstationRepository.Get().Where(x => x.Name == name).First();
             _workstationRepository.Delete(workstationToRemove);
+        }
+
+        public IEnumerable<WorkstationDTO> Get(GetWorkstationFilter? getWorkstationFilter = null)
+        {
+            var filter = _mapper.Map<GetWorkstationsQuery>(getWorkstationFilter);
+            var filteredWorkstations = _workstationRepository.Get(filter);
+            return _mapper.Map<IEnumerable<WorkstationDTO>>(filteredWorkstations);
         }
 
         public IEnumerable<WorkstationDTO> Get()
         {
             var workstations = _workstationRepository.Get();
             return _mapper.Map<IEnumerable<WorkstationDTO>>(workstations);
+
         }
 
         public WorkstationDTO Update(WorkstationDTO workstation)

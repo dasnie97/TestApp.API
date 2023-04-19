@@ -1,7 +1,8 @@
-﻿using Application.DTO.Workstations;
+﻿using ProductTest.DTO;
 using Application.Interfaces.Workstations;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Application.DTO;
 
 namespace WebAPI.Controllers.Workstations
 {
@@ -17,19 +18,27 @@ namespace WebAPI.Controllers.Workstations
 
         [SwaggerOperation(Summary ="Create new workstation")]
         [HttpPost]
-        public IActionResult AddNewWorkstation(AddWorkstationDTO newWorkstation)
+        public IActionResult AddNewWorkstation(CreateWorkstationDTO newWorkstation)
         {
             var workstation = _workstationService.Add(newWorkstation);
-            return Created($"api/workstation/{workstation.Id}", workstation);
+            return Created($"api/workstation/{workstation.Name}", workstation);
         }
 
-        [SwaggerOperation(Summary = "Get workstations")]
+        [SwaggerOperation(Summary = "Gets workstations according to filter values")]
         [HttpGet]
-        public IActionResult GetWorkstations()
+        public IActionResult GetFiltered([FromQuery] GetWorkstationFilter workstationFilterParameters)
         {
-            var workstations = _workstationService.Get();
-            return Ok(workstations);
+            var filteredWorkstations = _workstationService.Get(workstationFilterParameters);
+            return Ok(filteredWorkstations);
         }
+
+        //[SwaggerOperation(Summary = "Get workstations")]
+        //[HttpGet]
+        //public IActionResult GetWorkstations()
+        //{
+        //    var workstations = _workstationService.Get();
+        //    return Ok(workstations);
+        //}
 
         [SwaggerOperation(Summary ="Update workstation")]
         [HttpPut]
@@ -41,9 +50,9 @@ namespace WebAPI.Controllers.Workstations
 
         [SwaggerOperation(Summary ="Delete workstation")]
         [HttpDelete]
-        public IActionResult DeleteWorkstation(int id)
+        public IActionResult DeleteWorkstation(string name)
         {
-            _workstationService.Delete(id);
+            _workstationService.Delete(name);
             return NoContent();
         }
     }

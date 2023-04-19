@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+/Infrastructure/Migrations
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -372,3 +373,4 @@ FodyWeavers.xsd
 /Infrastructure/Data/Migrations
 /TestApp.sln
 /Logic.png
+/Infrastructure/Migrations/TestWatchContextModelSnapshot.cs
