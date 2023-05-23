@@ -1,6 +1,6 @@
 ﻿namespace Application.DTO;
 
-public class GetTestReportFilter
+public class TestReportFilterDTO
 {
     public string[]? workstation { get; set; } = null;
     public string[]? serialNumber { get; set; } = null;
