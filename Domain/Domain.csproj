@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\GenericTestReport\GenericTestReport\GenericTestReport.csproj" />
     <ProjectReference Include="..\..\TestEngineering\TestEngineering\TestEngineering.csproj" />
   </ItemGroup>
 

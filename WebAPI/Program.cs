@@ -1,12 +1,9 @@
-using Application.Interfaces.TestReport;
-using Application.Interfaces.Workstations;
+using Application.Interfaces;
 using Application.Mappings;
-using Application.Services.LogFiles;
-using Application.Services.Workstations;
+using Application.Services;
 using Domain.Interfaces;
 using Infrastructure.Data;
-using Infrastructure.Repositories.LogFiles;
-using Infrastructure.Repositories.Workstations;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using WebAPI.WorkerService;
