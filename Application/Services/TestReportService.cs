@@ -17,12 +17,12 @@ public class TestReportService : ITestReportService
         _mapper = mapper;
     }
 
-    public TestReportDTO Add(CreateTestReportDTO logFile)
+    public TestReportDTO Add(CreateTestReportDTO testreport)
     {
-        if (string.IsNullOrEmpty(logFile.SerialNumber)) throw new Exception("Test report has to have serial number!");
-        var mappedLogFile = _mapper.Map<TestReport>(logFile);
-        _testReportRepository.Add(mappedLogFile);
-        return _mapper.Map<TestReportDTO>(mappedLogFile);
+        if (string.IsNullOrEmpty(testreport.SerialNumber)) throw new Exception("Test report has to have serial number!");
+        var mappedtestreport = _mapper.Map<TestReport>(testreport);
+        _testReportRepository.Add(mappedtestreport);
+        return _mapper.Map<TestReportDTO>(mappedtestreport);
     }
 
     public TestReportDTO GetTestReportByID(int id)
@@ -33,30 +33,30 @@ public class TestReportService : ITestReportService
 
     public void Update(UpdateTestReportDTO updateTestReportDTO)
     {
-        var originalLogFile = _testReportRepository.Get(updateTestReportDTO.Id);
-        var logFile = _mapper.Map(updateTestReportDTO, originalLogFile);
-        _testReportRepository.Update(logFile);
+        var originaltestreport = _testReportRepository.Get(updateTestReportDTO.Id);
+        var testreport = _mapper.Map(updateTestReportDTO, originaltestreport);
+        _testReportRepository.Update(testreport);
     }
 
     public void Delete(int id)
     {
-        var logFile = _testReportRepository.Get(id);
-        _testReportRepository.Delete(logFile);
+        var testreport = _testReportRepository.Get(id);
+        _testReportRepository.Delete(testreport);
     }
 
     public IEnumerable<TestReportDTO> GetAllTestReports()
     {
         var getTestReportsFilter = new TestReportFilterDTO();
         var filter = _mapper.Map<TestReportFilter>(getTestReportsFilter);
-        var filteredLogFiles = _testReportRepository.Get(filter);
-        return _mapper.Map<IEnumerable<TestReportDTO>>(filteredLogFiles);
+        var filteredtestreports = _testReportRepository.Get(filter);
+        return _mapper.Map<IEnumerable<TestReportDTO>>(filteredtestreports);
     }
 
     public IEnumerable<TestReportDTO> GetTestReports(TestReportFilterDTO getTestReportsFilter)
     {
         var filter = _mapper.Map<TestReportFilter>(getTestReportsFilter);
-        var filteredLogFiles = _testReportRepository.Get(filter);
-        return _mapper.Map<IEnumerable<TestReportDTO>>(filteredLogFiles);
+        var filteredtestreports = _testReportRepository.Get(filter);
+        return _mapper.Map<IEnumerable<TestReportDTO>>(filteredtestreports);
     }
 
     public IEnumerable<string> GetAllWorkstations()

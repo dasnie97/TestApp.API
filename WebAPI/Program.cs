@@ -16,7 +16,8 @@ builder.Services.AddScoped<ITestReportRepository, TestReportRepository>();
 builder.Services.AddScoped<ITestReportService, TestReportService>();
 builder.Services.AddScoped<IWorkstationRepository, WorkstationRepository>();
 builder.Services.AddScoped<IWorkstationService, WorkstationService>();
-builder.Services.AddDbContext<TestWatchContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestWatch")));
+//builder.Services.AddDbContext<TestWatchContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer")));
+builder.Services.AddDbContext<TestWatchContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("MySQL")));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();

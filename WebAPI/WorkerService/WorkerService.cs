@@ -31,8 +31,8 @@ public class Worker : BackgroundService
                 foreach (var workstation in workstations)
                 {
                     filter.workstation = new string[] {workstation.Name};
-                    var logFiles = testReportService.GetTestReports(filter);
-                    if (logFiles.Count() == 0)
+                    var testreports = testReportService.GetTestReports(filter);
+                    if (testreports.Count() == 0)
                     {
                         workstation.State = "Idle";
                         workstationService.Update(workstation);

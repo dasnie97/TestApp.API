@@ -41,9 +41,9 @@ public class TestReportController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var logFile = _testReportService.GetTestReportByID(id);
-        if (logFile == null) return NotFound();
-        return Ok(logFile);
+        var testreport = _testReportService.GetTestReportByID(id);
+        if (testreport == null) return NotFound();
+        return Ok(testreport);
     }
 
     [SwaggerOperation(Summary = "Updates test report")]
