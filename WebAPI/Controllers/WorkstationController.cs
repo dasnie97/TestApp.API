@@ -11,9 +11,12 @@ namespace WebAPI.Controllers;
 public class WorkstationController : ControllerBase
 {
     private readonly IWorkstationService _workstationService;
-    public WorkstationController(IWorkstationService workstationService)
+    private readonly ILogger<WorkstationController> _logger;
+
+    public WorkstationController(IWorkstationService workstationService, ILogger<WorkstationController> logger)
     {
         _workstationService = workstationService;
+        _logger = logger;
     }
 
 

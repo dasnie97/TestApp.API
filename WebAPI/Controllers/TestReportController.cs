@@ -3,7 +3,7 @@ using TestEngineering.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Application.Interfaces;
-using Domain.Helpers;
+using TestEngineering.Exceptions;
 
 namespace WebAPI.Controllers;
 
@@ -12,9 +12,12 @@ namespace WebAPI.Controllers;
 public class TestReportController : ControllerBase
 {
     private readonly ITestReportService _testReportService;
-    public TestReportController(ITestReportService testReportService)
+    private readonly ILogger<TestReportController> _logger;
+
+    public TestReportController(ITestReportService testReportService, ILogger<TestReportController> logger)
     {
         _testReportService = testReportService;
+        _logger = logger;
     }
 
 
@@ -29,10 +32,12 @@ public class TestReportController : ControllerBase
         }
         catch (WorkstationNotFoundException ex)
         {
+            _logger.LogError(ex, ex.Message);
             return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             return StatusCode(500, ex.Message);
         }
     }
@@ -57,10 +62,12 @@ public class TestReportController : ControllerBase
         }
         catch (WorkstationNotFoundException ex)
         {
+            _logger.LogError(ex, ex.Message);
             return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             return StatusCode(500, ex.Message);
         }
     }
@@ -76,10 +83,12 @@ public class TestReportController : ControllerBase
         }
         catch (TestReportNotFoundException ex)
         {
+            _logger.LogError(ex, ex.Message);
             return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             return StatusCode(500, ex.Message);
         }
     }
