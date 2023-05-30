@@ -24,8 +24,6 @@ public class Worker : BackgroundService
                 var testReportService = scope.ServiceProvider.GetRequiredService<ITestReportService>();
                 var filter = new TestReportFilterDTO();
                 filter.dateFrom = DateTime.Now.AddMinutes(-20);
-                filter.firstPass = true;
-                filter.result = "Passed";
                 
                 var workstations = workstationService.GetAll();
                 foreach (var workstation in workstations)
