@@ -90,7 +90,7 @@ public class TestReportRepository : ITestReportRepository
 
     public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
     {
-        var currentTime = new DateTime(2022, 11, 10, 18, 0, 0);
+        var currentTime = DateTime.Now;
         var query = _testWatchContext.TestReports.
             Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1)).
             Where(x => x.IsFirstPass == true).AsEnumerable().GroupBy(x => x.WorkstationName);
@@ -120,9 +120,14 @@ public class TestReportRepository : ITestReportRepository
                 float failed = records.Count(x => x.Status == TestStatus.Failed);
                 float total = records.Count();
                 var tP = records.First().TestDateTimeStarted;
+                var offset = 1;
+                if (tP.Hour + 1 == 24)
+                {
+                    offset = -23;
+                }
                 workstationYieldPoints.Add(new YieldPoint
                 {
-                    DateAndTime = new DateTime(tP.Year, tP.Month, tP.Day, tP.Hour + 1, 0, 0),
+                    DateAndTime = new DateTime(tP.Year, tP.Month, tP.Day, tP.Hour + offset, 0, 0),
                     Yield = passed / total,
                     Total = (int)total,
                     Passed = (int)passed,
@@ -169,24 +174,19 @@ public class TestReportRepository : ITestReportRepository
         {
             return false;
         }
-        try
+
+        var averageTestTime = dataSet.Where(x => x.Status == TestStatus.Passed).Average(x => x.TestingTime!.Value.TotalSeconds);
+
+        if (averageTestTime == 0)
         {
-            var averageTestTime = dataSet.Where(x => x.Status == TestStatus.Passed).Average(x => x.TestingTime!.Value.TotalSeconds);
-            var minHourlyOutput = 1000 / averageTestTime;
-
-            if (averageTestTime == 0)
-            {
-                throw new Exception("Average test time is 0!");
-            }
-
-            if (dataSet.Count() <= minHourlyOutput)
-            {
-                return false;
-            }
+            return true;
         }
-        catch (Exception)
-        {
 
+        var minHourlyOutput = 1000 / averageTestTime;
+
+        if (dataSet.Count() <= minHourlyOutput)
+        {
+            return false;
         }
 
         return true;
