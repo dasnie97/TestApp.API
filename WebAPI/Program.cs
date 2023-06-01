@@ -3,7 +3,7 @@ using Application.Services;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using WebAPI.WorkerService;
@@ -14,7 +14,6 @@ var logger = new LoggerConfiguration()
   .ReadFrom.Configuration(builder.Configuration)
   .Enrich.FromLogContext()
   .CreateLogger();
-builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
 // Add services to the container.
@@ -23,9 +22,9 @@ builder.Services.AddScoped<ITestReportRepository, TestReportRepository>();
 builder.Services.AddScoped<ITestReportService, TestReportService>();
 builder.Services.AddScoped<IWorkstationRepository, WorkstationRepository>();
 builder.Services.AddScoped<IWorkstationService, WorkstationService>();
-builder.Services.AddDbContext<TestWatchContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer")));
-//builder.Services.AddDbContext<TestWatchContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("MySQL")));
+builder.Services.AddDbContext<TestWatchContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -51,6 +50,8 @@ app.UseHttpsRedirection();
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthorization();
+
+app.UseAuthentication();
 
 app.MapControllers();
 
