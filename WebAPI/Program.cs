@@ -8,6 +8,8 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using WebAPI.WorkerService;
 
+Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
 var builder = WebApplication.CreateBuilder(args);
 
 var logger = new LoggerConfiguration()
@@ -35,6 +37,8 @@ builder.Services.AddSwaggerGen(c=>
     c.SwaggerDoc("v1", new OpenApiInfo { Title="WebAPI", Version = "v1" });
     c.MapType<TimeSpan>(() => new OpenApiSchema { Type = "string", Format = "time-span" });
 });
+
+builder.Host.UseWindowsService();
 
 var app = builder.Build();
 
