@@ -88,7 +88,7 @@ public class TestReportRepository : ITestReportRepository
             ToList();
     }
 
-    public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
+    public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints(List<Workstation> workstations, DateTime dateFrom, DateTime dateTo)
     {
         var currentTime = DateTime.Now;
         var query = _testWatchContext.TestReports.
@@ -141,6 +141,30 @@ public class TestReportRepository : ITestReportRepository
         return yieldPoints;
     }
 
+    private bool IsYieldPointOk(IEnumerable<TestReport> dataSet)
+    {
+        if (dataSet.Count() == 0)
+        {
+            return false;
+        }
+
+        var averageTestTime = dataSet.Where(x => x.Status == TestStatus.Passed).Average(x => x.TestingTime!.Value.TotalSeconds);
+
+        if (averageTestTime == 0)
+        {
+            return true;
+        }
+
+        var minHourlyOutput = 1000 / averageTestTime;
+
+        if (dataSet.Count() <= minHourlyOutput)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private Workstation? FindRelatedWorkstation(TestReport testReport)
     {
         var relatedWorkstation = _testWatchContext.Workstations.Where(w => w.Name == testReport.Workstation.Name).SingleOrDefault();
@@ -166,30 +190,6 @@ public class TestReportRepository : ITestReportRepository
         {
             testReport.IsFirstPass = true;
         }
-    }
-
-    private bool IsYieldPointOk(IEnumerable<TestReport> dataSet)
-    {
-        if (dataSet.Count() == 0)
-        {
-            return false;
-        }
-
-        var averageTestTime = dataSet.Where(x => x.Status == TestStatus.Passed).Average(x => x.TestingTime!.Value.TotalSeconds);
-
-        if (averageTestTime == 0)
-        {
-            return true;
-        }
-
-        var minHourlyOutput = 1000 / averageTestTime;
-
-        if (dataSet.Count() <= minHourlyOutput)
-        {
-            return false;
-        }
-
-        return true;
     }
 
     private IQueryable<TestReport> AddFiltersOnQuery(IQueryable<TestReport> testReports, TestReportFilter filter)
