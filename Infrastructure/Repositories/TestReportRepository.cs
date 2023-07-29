@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data;
+using Infrastructure.Helpers;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using TestEngineering.Exceptions;
@@ -88,27 +89,27 @@ public class TestReportRepository : ITestReportRepository
             ToList();
     }
 
-    public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints(List<Workstation> workstations, DateTime dateFrom, DateTime dateTo)
+    public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints(ChartInputData chartInputData)
     {
-        var currentTime = DateTime.Now;
-        var query = _testWatchContext.TestReports.
-            Where(x => x.TestDateTimeStarted <= currentTime && x.TestDateTimeStarted >= currentTime.AddDays(-1)).
-            Where(x => x.IsFirstPass == true).AsEnumerable().GroupBy(x => x.WorkstationName);
+        DateTime startTime = chartInputData.DateFrom ?? DateTime.Now.AddDays(-3);
+        DateTime endTime = chartInputData.DateTo ?? DateTime.Now;
+
+        IEnumerable<IGrouping<string, TestReport>> query = BuildQuery(chartInputData, startTime, endTime);
+        List<TimeInterval> timeIntervals = CalculateTimeIntervals(startTime, endTime);
 
         Dictionary<string, IEnumerable<YieldPoint>> yieldPoints = new();
 
         foreach (IGrouping<string, TestReport> workstationGroup in query)
         {
             List<YieldPoint> workstationYieldPoints = new();
-            foreach (var hour in Enumerable.Range(0, 25))
+            foreach (var timeInterval in timeIntervals)
             {
-                var time = currentTime.AddHours(-25).AddHours(hour);
-                var records = workstationGroup.Where(x => x.TestDateTimeStarted.Hour == time.Hour && x.TestDateTimeStarted.Day == time.Day).ToList();
+                var records = workstationGroup.Where(x => x.TestDateTimeStarted >= timeInterval.Start && x.TestDateTimeStarted <= timeInterval.End).ToList();
                 if (!IsYieldPointOk(records))
                 {
                     workstationYieldPoints.Add(new YieldPoint
                     {
-                        DateAndTime = time.AddHours(1).AddMinutes(-time.Minute).AddSeconds(-time.Second),
+                        DateAndTime = timeInterval.Start,
                         Yield = null,
                         Total = 0,
                         Passed = 0,
@@ -119,15 +120,9 @@ public class TestReportRepository : ITestReportRepository
                 float passed = records.Count(x => x.Status == TestStatus.Passed);
                 float failed = records.Count(x => x.Status == TestStatus.Failed);
                 float total = records.Count();
-                var tP = records.First().TestDateTimeStarted;
-                var offset = 1;
-                if (tP.Hour + 1 == 24)
-                {
-                    offset = -23;
-                }
                 workstationYieldPoints.Add(new YieldPoint
                 {
-                    DateAndTime = new DateTime(tP.Year, tP.Month, tP.Day, tP.Hour + offset, 0, 0),
+                    DateAndTime = timeInterval.Start,
                     Yield = passed / total,
                     Total = (int)total,
                     Passed = (int)passed,
@@ -139,6 +134,33 @@ public class TestReportRepository : ITestReportRepository
 
 
         return yieldPoints;
+    }
+
+    private IEnumerable<IGrouping<string, TestReport>> BuildQuery(ChartInputData chartInputData, DateTime startTime, DateTime endTime)
+    {
+        var query = _testWatchContext.TestReports.
+            Where(x => x.TestDateTimeStarted <= endTime && x.TestDateTimeStarted >= startTime);
+
+        if (chartInputData != null && chartInputData.Workstation.Length > 0)
+        {
+            query = query.Where(x => chartInputData.Workstation.Contains(x.WorkstationName));
+        }
+
+        IEnumerable<IGrouping<string, TestReport>> queryGroup = query.Where(x => x.IsFirstPass == true).AsEnumerable().GroupBy(x => x.WorkstationName);
+        return queryGroup;
+    }
+
+    private List<TimeInterval> CalculateTimeIntervals(DateTime startTime, DateTime endTime)
+    {
+        List<TimeInterval> timeIntervals = new List<TimeInterval>();
+        long timeSample = (endTime - startTime).Ticks / 100;
+        for (int i = 0; i < 100; i++)
+        {
+            var start = new DateTime(startTime.Ticks + i * timeSample);
+            var end = new DateTime(startTime.Ticks + (i + 1) * timeSample);
+            timeIntervals.Add(new TimeInterval(start, end));
+        }
+        return timeIntervals;
     }
 
     private bool IsYieldPointOk(IEnumerable<TestReport> dataSet)
