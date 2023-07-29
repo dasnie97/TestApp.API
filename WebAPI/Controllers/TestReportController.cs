@@ -112,9 +112,9 @@ public class TestReportController : ControllerBase
 
     [SwaggerOperation(Summary = "Gets yield of each workstation from last 24 hours")]
     [HttpGet("yield")]
-    public IActionResult GetYieldPoints()
+    public IActionResult GetYieldPoints([FromQuery] ChartInputDataDTO chartInputData)
     {
-        var yieldPoints = _testReportService.GetYieldPoints();
+        var yieldPoints = _testReportService.GetYieldPoints(chartInputData);
         return Ok(yieldPoints);
     }
 }

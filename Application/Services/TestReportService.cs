@@ -64,8 +64,10 @@ public class TestReportService : ITestReportService
         return _mapper.Map<IEnumerable<string>>(_testReportRepository.GetAllWorkstations());
     }
 
-    public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints()
+    public Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints(ChartInputDataDTO chartInputDataDTO)
     {
-        return _testReportRepository.GetYieldPoints();
+        var chartInputData = _mapper.Map<ChartInputData>(chartInputDataDTO);
+        var yieldPoints = _testReportRepository.GetYieldPoints(chartInputData);
+        return yieldPoints;
     }
 }

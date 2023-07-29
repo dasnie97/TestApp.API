@@ -17,5 +17,6 @@ public class MappingProfile : Profile
         CreateMap<Workstation, WorkstationDTO>();
         CreateMap<CreateWorkstationDTO, Workstation>();
         CreateMap<WorkstationDTO, Workstation>();
+        CreateMap<ChartInputDataDTO, ChartInputData>();
     }
 }

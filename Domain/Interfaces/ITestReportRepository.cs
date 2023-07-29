@@ -10,5 +10,5 @@ public interface ITestReportRepository
     void Delete(TestReport testReport);
     IEnumerable<TestReport> Get(TestReportFilter testReportFilter);
     IEnumerable<string> GetAllWorkstations();
-    Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints();
+    Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints(ChartInputData chartInputData);
 }
