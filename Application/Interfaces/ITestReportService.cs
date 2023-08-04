@@ -13,5 +13,5 @@ public interface ITestReportService
     IEnumerable<TestReportDTO> GetAllTestReports();
     IEnumerable<TestReportDTO> GetTestReports(TestReportFilterDTO testReportFilter);
     IEnumerable<string> GetAllWorkstations();
-    Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints();
+    Dictionary<string, IEnumerable<YieldPoint>> GetYieldPoints(ChartInputDataDTO chartInputData);
 }
