@@ -132,8 +132,14 @@ public class TestReportRepository : ITestReportRepository
             yieldPoints.Add(workstationGroup.Key, workstationYieldPoints);
         }
 
+        return EvaluateReturnObject(yieldPoints);
+    }
 
-        return yieldPoints;
+    private Dictionary<string, IEnumerable<YieldPoint>> EvaluateReturnObject(Dictionary<string, IEnumerable<YieldPoint>> yieldPoints)
+    {
+        var sorted = yieldPoints.OrderByDescending(pair => pair.Value.Sum(val => val.Failed)).Take(5).ToDictionary(t=>t.Key, t=>t.Value);
+
+        return sorted;
     }
 
     private IEnumerable<IGrouping<string, TestReport>> BuildQuery(ChartInputData chartInputData, DateTime startTime, DateTime endTime)
@@ -152,9 +158,11 @@ public class TestReportRepository : ITestReportRepository
 
     private List<TimeInterval> CalculateTimeIntervals(DateTime startTime, DateTime endTime)
     {
+        var NUMBER_OF_INTERVALS = 24;
+
         List<TimeInterval> timeIntervals = new List<TimeInterval>();
-        long timeSample = (endTime - startTime).Ticks / 100;
-        for (int i = 0; i < 100; i++)
+        long timeSample = (endTime - startTime).Ticks / NUMBER_OF_INTERVALS;
+        for (int i = 0; i < NUMBER_OF_INTERVALS; i++)
         {
             var start = new DateTime(startTime.Ticks + i * timeSample);
             var end = new DateTime(startTime.Ticks + (i + 1) * timeSample);
@@ -165,21 +173,9 @@ public class TestReportRepository : ITestReportRepository
 
     private bool IsYieldPointOk(IEnumerable<TestReport> dataSet)
     {
-        if (dataSet.Count() == 0)
-        {
-            return false;
-        }
+        var passedRecords = dataSet.Where(x => x.Status == TestStatus.Passed);
 
-        var averageTestTime = dataSet.Where(x => x.Status == TestStatus.Passed).Average(x => x.TestingTime!.Value.TotalSeconds);
-
-        if (averageTestTime == 0)
-        {
-            return true;
-        }
-
-        var minHourlyOutput = 1000 / averageTestTime;
-
-        if (dataSet.Count() <= minHourlyOutput)
+        if (passedRecords.Count() == 0)
         {
             return false;
         }
