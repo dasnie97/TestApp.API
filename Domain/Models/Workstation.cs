@@ -9,6 +9,7 @@ public class Workstation
     public DateTime RecordCreated { get; set; }
     public DateTime RecordUpdated { get; set; }
     public ICollection<TestReport> TestReports { get; set; }
+    public ICollection<DowntimeReport> DowntimeReports { get; set; }
 
     public Workstation(string name = "", string operatorName = "")
     {
