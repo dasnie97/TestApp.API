@@ -71,7 +71,7 @@ public class DowntimeReportRepository : IDowntimeReportRepository
           Include(t => t.Workstation).
           AsQueryable();
         query = AddFiltersOnQuery(query, filter);
-        return query.OrderByDescending(x => x.RecordCreated).Take(100).
+        return query.OrderByDescending(x => x.RecordCreated).Take(99).
         ToList();
     }
 
