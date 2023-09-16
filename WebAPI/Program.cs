@@ -24,6 +24,8 @@ builder.Services.AddScoped<ITestReportRepository, TestReportRepository>();
 builder.Services.AddScoped<ITestReportService, TestReportService>();
 builder.Services.AddScoped<IWorkstationRepository, WorkstationRepository>();
 builder.Services.AddScoped<IWorkstationService, WorkstationService>();
+builder.Services.AddScoped<IDowntimeReportRepository, DowntimeReportRepository>();
+builder.Services.AddScoped<IDowntimeReportService, DowntimeReportService>();
 builder.Services.AddDbContext<TestWatchContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate();

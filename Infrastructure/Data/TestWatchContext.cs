@@ -8,6 +8,7 @@ public class TestWatchContext : DbContext
 {
     public DbSet<TestReport> TestReports { get; set; }
     public DbSet<Workstation> Workstations { get; set; }
+    public DbSet<DowntimeReport> DowntimeReports { get; set; }
 
     private IConfiguration _configuration;
 
@@ -43,8 +44,18 @@ public class TestWatchContext : DbContext
             .ToTable("Workstations")
             .HasKey(w => w.Name);
 
+        modelBuilder.Entity<DowntimeReport>()
+            .ToTable("DowntimeReports")
+            .HasKey(d => d.Id);
+
         modelBuilder.Entity<Workstation>()
             .HasMany(w => w.TestReports)
+            .WithOne(t => t.Workstation)
+            .HasForeignKey(w => w.WorkstationName)
+            .HasPrincipalKey(t => t.Name);
+
+        modelBuilder.Entity<Workstation>()
+            .HasMany(w => w.DowntimeReports)
             .WithOne(t => t.Workstation)
             .HasForeignKey(w => w.WorkstationName)
             .HasPrincipalKey(t => t.Name);
@@ -52,6 +63,5 @@ public class TestWatchContext : DbContext
         modelBuilder.Entity<TestReport>()
             .Property(t=>t.Status)
             .HasConversion<string>();
-
     }
 }
