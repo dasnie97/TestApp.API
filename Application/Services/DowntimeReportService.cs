@@ -19,7 +19,7 @@ public class DowntimeReportService : IDowntimeReportService
 
     public DowntimeReportDTO Add(CreateDowntimeReportDTO downtimeReport)
     {
-        if (string.IsNullOrEmpty(downtimeReport.ProblemDescription)) throw new Exception("Downtime report has to have description defined!");
+        if (string.IsNullOrEmpty(downtimeReport.ProblemDescription)) throw new Exception("Downtime report has to have problem defined!");
         var mappedDowntimeReport = _mapper.Map<DowntimeReport>(downtimeReport);
         _downtimeReportRepository.Add(mappedDowntimeReport);
         return _mapper.Map<DowntimeReportDTO>(mappedDowntimeReport);
