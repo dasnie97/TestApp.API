@@ -24,6 +24,7 @@ public class TestReportRepository : ITestReportRepository
         {
             AttachToExistingWorkstation(testReport, relatedWorkstation);
             EvaluateFirstPass(testReport, relatedWorkstation);
+            EvaluateFalseCall(testReport, relatedWorkstation);
             testReport.RecordCreated = DateTime.Now;
             _testWatchContext.TestReports.Add(testReport);
             _testWatchContext.SaveChanges();
@@ -210,6 +211,27 @@ public class TestReportRepository : ITestReportRepository
         }
     }
 
+    private void EvaluateFalseCall(TestReport testReport, Workstation relatedWorkstation)
+    {
+        if (testReport.Status != TestStatus.Passed)
+        {
+            return;
+        }
+
+        const int TIME_TO_WAIT_BETWEEN_TEST_RUNS = 20;
+
+        var processStep = relatedWorkstation.ProcessStep;
+        var testReports = _testWatchContext.TestReports.Where(t => t.SerialNumber == testReport.SerialNumber &&
+                            t.Workstation.ProcessStep == processStep &&
+                            t.Status != TestStatus.Passed &&
+                            t.TestDateTimeStarted >= testReport.TestDateTimeStarted.AddMinutes(-TIME_TO_WAIT_BETWEEN_TEST_RUNS));
+
+        foreach (var falseCall in testReports)
+        {
+            falseCall.IsFalseCall = true;
+        }
+    }
+
     private IQueryable<TestReport> AddFiltersOnQuery(IQueryable<TestReport> testReports, TestReportFilter filter)
     {
         var predicate = PredicateBuilder.New<TestReport>(true); // returns all when no filters are added
@@ -257,6 +279,11 @@ public class TestReportRepository : ITestReportRepository
         if (filter.firstPass != null)
         {
             predicate = predicate.And(t => t.IsFirstPass == filter.firstPass);
+        }
+
+        if (filter.falseCall != null)
+        {
+            predicate = predicate.And(t => t.IsFalseCall == filter.falseCall);
         }
 
         if (filter.Result != TestStatus.Notset)
